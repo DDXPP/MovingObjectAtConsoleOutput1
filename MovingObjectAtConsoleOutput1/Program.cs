@@ -10,6 +10,7 @@ namespace MovingObjectAtConsoleOutput
 	{
 		static void Main(string[] args)
 		{
+			/*
 			int x = 0;
 			Rectangle rectangle = new Rectangle();
 			rectangle.SetLocation();
@@ -41,6 +42,8 @@ namespace MovingObjectAtConsoleOutput
 				}
 
 			} while (x == 0);
+			*/
+
 		}
 	}
 
@@ -179,35 +182,137 @@ namespace MovingObjectAtConsoleOutput
 				return 10;
 			}
 		}
+
 		public static int Height
 		{
 			get
 			{
-				return 10;
+				return 16;
 			}
 		}
 
-		private Display()                                                                          //Class Shape Constructor
-		{
-
-		}
-
-		public Shape[,] DisplayMatrix = new Shape[Width,Height];
-
-		public void PrepareForPrint()
-		{
-			for (int j = 0; j < Height; j++)
-			{
-				for (int i = 0; i < Height; i++)
-				{
-					DisplayMatrix[i, j].IsPixelPrinted = true;
-				}
-			}			
-		}
+		public static Shape[,] DisplayMatrix = new Shape[Width,Height];                            // Define a gameboard that is 10 in Length and 16 in height
 	}
 
 	public class Shape
 	{
 		public bool IsPixelPrinted { get; set; }
+
+		public int PositionX { get; set; }
+
+		public int PositionY { get; set; }
+
+		public Shape()                                                                             // Constructor
+		{
+			IsPixelPrinted = false;
+			PositionX = 5;
+			PositionY = 0;
+		}
+
+		public void InitPrintPixel(int i, int j)
+		{
+			Display.DisplayMatrix[i,j].IsPixelPrinted = true;
+		}
+	}
+
+	public class HorizontalShape : Shape
+	{
+		public void InitDraw()
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
+			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;
+			Display.DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted = true;
+		}
+
+		public void Rotate()                                                                       // Rotate about the second block
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted =false;
+
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
+			Display.DisplayMatrix[PositionX, PositionY + 1]    .IsPixelPrinted = true;             //   ├─┤
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┤
+		}                                                                                          //   └─┘
+
+	}
+
+	public class SShape : Shape
+	{
+		public void InitDraw()
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
+			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;
+		}
+
+		public void Rotate()
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted =false;
+
+			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ┌─┐
+			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┐
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┼─┤
+			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //     └─┘
+		}
+	}
+
+	public class LShape : Shape
+	{
+		public void InitDraw()
+		{
+			Display.DisplayMatrix[PositionX, PositionY].        IsPixelPrinted = true;             //   ┌─┐
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
+			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
+		}
+
+		public void Rotate()
+		{
+			Display.DisplayMatrix[PositionX, PositionY].       IsPixelPrinted = false;
+			Display.DisplayMatrix[PositionX, PositionY - 1].   IsPixelPrinted = false;
+			Display.DisplayMatrix[PositionX, PositionY - 2].   IsPixelPrinted = false;
+			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
+
+			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;             //   ├─┼─┐
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┘
+		}
+	}
+
+	public class TShape : Shape
+	{
+		public void InitDraw()
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
+			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   └─┴─┴─┘
+			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
+		}
+
+	}
+
+	public class OShape : Shape
+	{
+		public void InitDraw()
+		{
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
+			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
+			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
+		}
+
+		public void Rotate()
+		{
+
+		}
 	}
 }
