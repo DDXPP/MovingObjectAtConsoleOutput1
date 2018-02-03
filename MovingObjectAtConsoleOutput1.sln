@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovingObjectAtConsoleOutput1", "MovingObjectAtConsoleOutput1\MovingObjectAtConsoleOutput1.csproj", "{FED380A1-49D2-41CD-8EA9-56E3A3AFC934}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FED380A1-49D2-41CD-8EA9-56E3A3AFC934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED380A1-49D2-41CD-8EA9-56E3A3AFC934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED380A1-49D2-41CD-8EA9-56E3A3AFC934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED380A1-49D2-41CD-8EA9-56E3A3AFC934}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {153619B7-8267-4DF2-8120-1C1CAD0CB704}
+	EndGlobalSection
+EndGlobal
