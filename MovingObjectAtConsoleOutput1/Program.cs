@@ -192,6 +192,25 @@ namespace MovingObjectAtConsoleOutput
 		}
 
 		public static Shape[,] DisplayMatrix = new Shape[Width,Height];                            // Define a gameboard that is 10 in Length and 16 in height
+
+		public static void OverAllDraw()
+		{
+			for (int j = 0; j < Height; j++)
+			{
+				for (int i = 0; i < Width; i++)
+				{
+					if (DisplayMatrix[i, j].IsPixelPrinted)
+					{
+						Console.Write("■");
+					}
+					else
+					{
+						Console.Write("□");
+					}
+					Console.WriteLine();
+				}
+			}
+		}
 	}
 
 	public class Shape
@@ -209,7 +228,7 @@ namespace MovingObjectAtConsoleOutput
 			PositionY = 0;
 		}
 
-		public void InitPrintPixel(int i, int j)
+		public void InitPrintPixel(int i, int j)                                                   // This block of code seems to be redundant
 		{
 			Display.DisplayMatrix[i,j].IsPixelPrinted = true;
 		}
@@ -217,7 +236,7 @@ namespace MovingObjectAtConsoleOutput
 
 	public class HorizontalShape : Shape
 	{
-		public void InitDraw()
+		public void InitPrint()
 		{
 			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
 			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
@@ -242,7 +261,7 @@ namespace MovingObjectAtConsoleOutput
 
 	public class SShape : Shape
 	{
-		public void InitDraw()
+		public void InitPrint()
 		{
 			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
 			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
@@ -266,9 +285,9 @@ namespace MovingObjectAtConsoleOutput
 
 	public class LShape : Shape
 	{
-		public void InitDraw()
+		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY].        IsPixelPrinted = true;             //   ┌─┐
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
 			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
 			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
 			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
@@ -276,9 +295,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public void Rotate()
 		{
-			Display.DisplayMatrix[PositionX, PositionY].       IsPixelPrinted = false;
-			Display.DisplayMatrix[PositionX, PositionY - 1].   IsPixelPrinted = false;
-			Display.DisplayMatrix[PositionX, PositionY - 2].   IsPixelPrinted = false;
+			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
+			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted =false;
 			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
 
 			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
@@ -290,7 +309,7 @@ namespace MovingObjectAtConsoleOutput
 
 	public class TShape : Shape
 	{
-		public void InitDraw()
+		public void InitPrint()
 		{
 			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
 			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
@@ -302,7 +321,7 @@ namespace MovingObjectAtConsoleOutput
 
 	public class OShape : Shape
 	{
-		public void InitDraw()
+		public void InitPrint()
 		{
 			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
 			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
@@ -312,7 +331,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public void Rotate()
 		{
-
+			// It has no ROTATE method
 		}
 	}
 }
