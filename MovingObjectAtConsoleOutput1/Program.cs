@@ -44,6 +44,10 @@ namespace MovingObjectAtConsoleOutput
 			} while (x == 0);
 			*/
 
+			HorizontalShape horizontalShape = new HorizontalShape();
+			horizontalShape.InitPrint();
+			Display.OverAllDraw();
+
 		}
 	}
 
@@ -191,7 +195,6 @@ namespace MovingObjectAtConsoleOutput
 			}
 		}
 
-		public static Shape[,] DisplayMatrix = new Shape[Width,Height];                            // Define a gameboard that is 10 in Length and 16 in height
 
 		public static void OverAllDraw()
 		{
@@ -199,7 +202,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				for (int i = 0; i < Width; i++)
 				{
-					if (DisplayMatrix[i, j].IsPixelPrinted)
+					if (Shape.DisplayMatrixExchanger()[i,j].IsPixelPrinted)
 					{
 						Console.Write("■");
 					}
@@ -215,6 +218,13 @@ namespace MovingObjectAtConsoleOutput
 
 	public class Shape
 	{
+		public static Shape[,] DisplayMatrix = new Shape[Display.Width,Display.Height];                            // Define a gameboard that is 10 in Length and 16 in height
+
+		public static Shape[,] DisplayMatrixExchanger()
+		{
+			return DisplayMatrix;
+		}
+
 		public bool IsPixelPrinted { get; set; }
 
 		public int PositionX { get; set; }
@@ -226,11 +236,20 @@ namespace MovingObjectAtConsoleOutput
 			IsPixelPrinted = false;
 			PositionX = 5;
 			PositionY = 0;
+
+			for (int j = 0; j < Display.Height; j++)
+			{
+				for (int i = 0; i < Display.Width; i++)
+				{
+					DisplayMatrix[i, j] = new Shape();
+				}
+			}
+
 		}
 
 		public void InitPrintPixel(int i, int j)                                                   // This block of code seems to be redundant
 		{
-			Display.DisplayMatrix[i,j].IsPixelPrinted = true;
+			DisplayMatrix[i,j].IsPixelPrinted = true;
 		}
 	}
 
@@ -238,23 +257,23 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
-			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;
-			Display.DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted = true;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
+			DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;
+			DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted = true;
 		}
 
 		public void Rotate()                                                                       // Rotate about the second block
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted =false;
 
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-			Display.DisplayMatrix[PositionX, PositionY + 1]    .IsPixelPrinted = true;             //   ├─┤
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┤
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
+			DisplayMatrix[PositionX, PositionY + 1]    .IsPixelPrinted = true;             //   ├─┤
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┤
 		}                                                                                          //   └─┘
 
 	}
@@ -263,23 +282,23 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
+			DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;
 		}
 
 		public void Rotate()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted =false;
 
-			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ┌─┐
-			Display.DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┐
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┼─┤
-			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //     └─┘
+			DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ┌─┐
+			DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┐
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┼─┤
+			DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //     └─┘
 		}
 	}
 
@@ -287,23 +306,23 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
-			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
+			DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
 		}
 
 		public void Rotate()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted =false;
-			Display.DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted =false;
+			DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
 
-			Display.DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;             //   ├─┼─┐
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┘
+			DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
+			DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;             //   ├─┼─┐
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┘
 		}
 	}
 
@@ -311,10 +330,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
-			Display.DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   └─┴─┴─┘
-			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
+			DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   └─┴─┴─┘
+			DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
 		}
 
 	}
@@ -323,10 +342,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitPrint()
 		{
-			Display.DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
-			Display.DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
-			Display.DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-			Display.DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
+			DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
+			DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
+			DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
+			DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
 		}
 
 		public void Rotate()
