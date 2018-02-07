@@ -375,6 +375,20 @@ namespace MovingObjectAtConsoleOutput
 	{
 		protected static int width { get; set; } = 10;
 		protected static int height { get; set; } = 16;
+
+		public void Move(Action type)
+		{
+			switch (type)
+			{
+				case Action.Up:
+					
+					break;
+
+
+				default:
+					break;
+			}
+		}
 	}
 
 	class Pixel : Display
@@ -425,7 +439,20 @@ namespace MovingObjectAtConsoleOutput
 		protected int AnchorPointX { get; set; } = 4;
 		protected int AnchorPointY { get; set; } = 0;
 
-		protected Pixel pixel = new Pixel();
+		public void Up()
+		{
+			// Do ROTATION here
+		}
+
+		public void Left()
+		{
+			AnchorPointX--;
+		}
+
+		public void Right()
+		{
+			AnchorPointX++;
+		}
 	}
 
 	class HorizontalShape : Shape
