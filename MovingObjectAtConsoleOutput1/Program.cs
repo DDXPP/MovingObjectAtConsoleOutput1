@@ -50,6 +50,8 @@ namespace MovingObjectAtConsoleOutput
 			Display.OverAllDraw();
 			*/
 			initialization();
+
+			Console.ReadKey();
 		}
 
 		private static void initialization()
@@ -368,6 +370,7 @@ namespace MovingObjectAtConsoleOutput
 		}
 	*/
 
+
 	class Display
 	{
 		protected static int width { get; set; } = 10;
@@ -378,9 +381,9 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public bool IsDisplayed = false;
 
-		public Pixel[,] DisplayMatrix = new Pixel[width, height];
+		public static Pixel[,] DisplayMatrix = new Pixel[width, height];
 
-		public Pixel GetPixel(int i, int j)
+		public static Pixel GetPixel(int i, int j)
 		{
 			return DisplayMatrix[i,j];
 		}
@@ -399,8 +402,8 @@ namespace MovingObjectAtConsoleOutput
 					{
 						Console.Write("□");
 					}
-					Console.WriteLine("");
 				}
+				Console.WriteLine("");
 			}
 		}
 
@@ -419,7 +422,7 @@ namespace MovingObjectAtConsoleOutput
 
 	class Shape : Display
 	{
-		protected int AnchorPointX { get; set; } = 5;
+		protected int AnchorPointX { get; set; } = 4;
 		protected int AnchorPointY { get; set; } = 0;
 
 		protected Pixel pixel = new Pixel();
@@ -430,10 +433,10 @@ namespace MovingObjectAtConsoleOutput
 		
 		public void InitDisplay()
 		{
-			pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┬─┬─┐
-			pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     //   └─┴─┴─┴─┘
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;
-			pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
+			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┬─┬─┐
+			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     //   └─┴─┴─┴─┘
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;
+			Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
 		}
 
 		/*
@@ -456,10 +459,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitDisplay()
 		{
-			pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┬─┐
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ┌─┼─┼─┘
-			pixel.GetPixel(AnchorPointX, AnchorPointY - 1).IsDisplayed = true;                     //   └─┴─┘
-			pixel.GetPixel(AnchorPointX - 1, AnchorPointY - 1).IsDisplayed = true;
+			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┬─┐
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ┌─┼─┼─┘
+			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   └─┴─┘
+			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
 		}
 
 		/*
@@ -482,10 +485,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitDisplay()
 		{
-			pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
-			pixel.GetPixel(AnchorPointX, AnchorPointY - 1).IsDisplayed = true;                     //   ├─┤
-			pixel.GetPixel(AnchorPointX, AnchorPointY - 2).IsDisplayed = true;                     //   ├─┼─┐
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY - 2).IsDisplayed = true;                 //   └─┴─┘
+			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
+			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ├─┤
+			Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;                     //   ├─┼─┐
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 2).IsDisplayed = true;                 //   └─┴─┘
 		}
 
 		/*
@@ -508,10 +511,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitDisplay()
 		{
-			pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┐
-			pixel.GetPixel(AnchorPointX, AnchorPointY - 1).IsDisplayed = true;                     //   ┌─┼─┼─┐
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY - 1).IsDisplayed = true;                 //   └─┴─┴─┘
-			pixel.GetPixel(AnchorPointX - 1, AnchorPointY - 1).IsDisplayed = true;
+			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┐
+			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ┌─┼─┼─┐
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;                 //   └─┴─┴─┘
+			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
 		}
 
 	}
@@ -520,10 +523,10 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public void InitDisplay()
 		{
-			pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
-			pixel.GetPixel(AnchorPointX, AnchorPointY - 1).IsDisplayed = true;                     //   └─┴─┘
-			pixel.GetPixel(AnchorPointX + 1, AnchorPointY - 1).IsDisplayed = true;
+			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
+			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   └─┴─┘
+			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
 		}
 
 		public void Rotate()
@@ -531,5 +534,7 @@ namespace MovingObjectAtConsoleOutput
 			// It has no ROTATE method
 		}
 	}
+
+	enum Action { Up, Down, Right, Left}
 }
 
