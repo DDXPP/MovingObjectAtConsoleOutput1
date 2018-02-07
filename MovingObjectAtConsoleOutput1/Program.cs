@@ -51,6 +51,8 @@ namespace MovingObjectAtConsoleOutput
 			*/
 			initialization();
 
+			MainLoop();
+
 			Console.ReadKey();
 		}
 
@@ -59,10 +61,29 @@ namespace MovingObjectAtConsoleOutput
 			Pixel pixel = new Pixel();
 			pixel.Initialization();
 
-			HorizontalShape horizontalShape = new HorizontalShape();
-			horizontalShape.InitDisplay();
+			HorizontalShape.InitDisplay();
 
 			pixel.OverallDisplay();
+		}
+
+		private static void MainLoop()
+		{
+			Console.Clear();
+
+			Shape.initDisplayDelegate = HorizontalShape.InitDisplay;
+
+			Pixel pixel = new Pixel();
+
+			do
+			{
+				Shape.initDisplayDelegate();
+				pixel.OverallDisplay();
+				char key = Console.ReadKey(true).KeyChar;
+				Display.Move(key);
+				Console.Clear();
+				Shape.initDisplayDelegate();
+
+			} while (true);
 		}
 	}
 
@@ -376,16 +397,26 @@ namespace MovingObjectAtConsoleOutput
 		protected static int width { get; set; } = 10;
 		protected static int height { get; set; } = 16;
 
-		public void Move(Action type)
+		public static void Move(char key)
 		{
-			switch (type)
+			Shape shape = new Shape();
+
+			switch (key.ToString())
 			{
-				case Action.Up:
-					
+				case "w":
+					shape.InitUp();
 					break;
 
+				case "s":
+					shape.InitDown();
+					break;
 
-				default:
+				case "a":
+					shape.InitLeft();
+					break;
+
+				case "d":
+					shape.InitRight();
 					break;
 			}
 		}
@@ -394,6 +425,7 @@ namespace MovingObjectAtConsoleOutput
 	class Pixel : Display
 	{
 		public bool IsDisplayed = false;
+		public bool Isplaced = false;
 
 		public static Pixel[,] DisplayMatrix = new Pixel[width, height];
 
@@ -436,29 +468,52 @@ namespace MovingObjectAtConsoleOutput
 
 	class Shape : Display
 	{
-		protected int AnchorPointX { get; set; } = 4;
-		protected int AnchorPointY { get; set; } = 0;
+		protected static int AnchorPointX { get; set; } = 4;
+		protected static int AnchorPointY { get; set; } = 0;
 
-		public void Up()
+		public void InitUp()
 		{
 			// Do ROTATION here
 		}
 
-		public void Left()
+		public void InitLeft()
 		{
 			AnchorPointX--;
+			RemovePreviousDisplay();
 		}
 
-		public void Right()
+		public void InitRight()
 		{
 			AnchorPointX++;
+			RemovePreviousDisplay();
 		}
+
+		public void InitDown()
+		{
+			AnchorPointY++;
+			RemovePreviousDisplay();
+		}
+
+		public void RemovePreviousDisplay()
+		{
+			for (int j = 0; j < 16; j++)
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					Pixel.GetPixel(i, j).IsDisplayed = false;
+				}
+			}
+
+		}
+
+		public delegate void InitDisplayDelegate();
+		public static InitDisplayDelegate initDisplayDelegate;
 	}
 
 	class HorizontalShape : Shape
 	{
 		
-		public void InitDisplay()
+		public static void InitDisplay()
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┬─┬─┐
 			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     //   └─┴─┴─┴─┘
@@ -484,7 +539,7 @@ namespace MovingObjectAtConsoleOutput
 
 	class SShape : Shape
 	{
-		public void InitDisplay()
+		public static void InitDisplay()
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┬─┐
 			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ┌─┼─┼─┘
@@ -510,7 +565,7 @@ namespace MovingObjectAtConsoleOutput
 
 	class LShape : Shape
 	{
-		public void InitDisplay()
+		public static void InitDisplay()
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
 			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ├─┤
@@ -536,7 +591,7 @@ namespace MovingObjectAtConsoleOutput
 
 	class TShape : Shape
 	{
-		public void InitDisplay()
+		public static void InitDisplay()
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //     ┌─┐
 			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ┌─┼─┼─┐
@@ -548,7 +603,7 @@ namespace MovingObjectAtConsoleOutput
 
 	class OShape : Shape
 	{
-		public void InitDisplay()
+		public static void InitDisplay()
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
 			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
@@ -562,6 +617,12 @@ namespace MovingObjectAtConsoleOutput
 		}
 	}
 
-	enum Action { Up, Down, Right, Left}
+	enum Action
+	{
+		Up,
+		Down,
+		Right,
+		Left
+	}
 }
 
