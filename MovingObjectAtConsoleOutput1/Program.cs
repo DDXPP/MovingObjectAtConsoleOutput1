@@ -30,16 +30,25 @@ namespace MovingObjectAtConsoleOutput
 
 			Pixel.OverallDisplay();
 
-			ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
-			SelectFallingShapeIndex();
 
 			do
 			{
-				char key = Console.ReadKey(true).KeyChar;
-				Display.Move(key);
-				Pixel.OverallDisplay();
+				ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
+				SelectFallingShapeIndex();
+
+				Shape.AnchorPointX = 5;
+				Shape.AnchorPointY = 0;
+
+				do
+				{
+					char key = Console.ReadKey(true).KeyChar;
+					Display.Move(key);
+					Pixel.OverallDisplay();
+
+				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
 
 			} while (true);
+
 		}
 
 		public static void SelectFallingShapeIndex()
@@ -131,6 +140,62 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
+		public static bool IsTouchPileLeftSurface()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i - 1, j).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+
+		public static bool IsTouchPileRightSurface()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i + 1, j).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+
+		public static bool IsTouchPileLowerSurface()                                               // Must be PRIOR to the "IsTouchLowerBoarder" statement
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i, j + 1).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
 		public static void SetShapeToStatic()
 		{
 			foreach (Pixel item in Pixel.DisplayMatrix)
@@ -164,19 +229,32 @@ namespace MovingObjectAtConsoleOutput
 				case "s":
 					shape.InitDown();
 					Console.Clear();
-					Shape.initDisplayDelegate();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
+
 					break;
 
 				case "a":
 					Console.Clear();
 					shape.InitLeft();
-					Shape.initDisplayDelegate();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
 					break;
 
 				case "d":
 					Console.Clear();
 					shape.InitRight();
-					Shape.initDisplayDelegate();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
 					break;
 			}
 		}
@@ -200,7 +278,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				for (int i = 0; i < 10; i++)
 				{
-					if (GetPixel(i, j).IsDisplayed)
+					if (GetPixel(i, j).IsDisplayed || GetPixel(i,j).Isplaced)
 					{
 						Console.Write("■");
 					}
@@ -228,8 +306,8 @@ namespace MovingObjectAtConsoleOutput
 
 	class Shape : Display
 	{
-		protected static int AnchorPointX { get; set; } = 4;
-		protected static int AnchorPointY { get; set; } = 0;
+		public static int AnchorPointX { get; set; } = 4;
+		public static int AnchorPointY { get; set; } = 0;
 		protected static int RotationIndex { get; set; } = 0;
 
 		public void InitUp()
@@ -243,7 +321,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitLeft()
 		{
-			if (!Program.IsTouchLeftBorder())
+			if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
 			{
 				AnchorPointX--;
 			}
@@ -252,7 +330,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitRight()
 		{
-			if (!Program.IsTouchRightBorder())
+			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
 			{
 				AnchorPointX++;
 			}
@@ -261,9 +339,13 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitDown()
 		{
-			if (!Program.IsTouchLowerBorder())
+			if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 			{
 				AnchorPointY++;
+			}
+			else
+			{
+				Program.SetShapeToStatic();
 			}
 			RemovePreviousDisplay();
 		}
