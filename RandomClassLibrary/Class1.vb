@@ -10,13 +10,19 @@
 
             If randomNumber < i / (Max - Min + 1) Then
 
-                GetRandomInteger = i
-
-                Exit For
+                Return i - 1
 
             End If
 
         Next
+
+    End Function
+
+    Public Shared Function GetRandomSingle() As Single
+
+        Randomize()
+
+        Return VBMath.Rnd()
 
     End Function
 
