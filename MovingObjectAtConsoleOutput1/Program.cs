@@ -142,7 +142,6 @@ namespace MovingObjectAtConsoleOutput
 				}
 			}
 		}
-
 		public static int ShapeIndex { get; set; }
 	}
 
