@@ -10,48 +10,18 @@ namespace MovingObjectAtConsoleOutput
 	{
 		static void Main(string[] args)
 		{
-			/*
-			int x = 0;
-			Rectangle rectangle = new Rectangle();
-			rectangle.SetLocation();
-			rectangle.Print();
-			Console.CursorVisible = false;
-			do
+			//initialization();
+
+			//MainLoop();
+
+			Random random = new Random();
+
+			for (int i = 0; i < 6; i++)
 			{
-				ConsoleKeyInfo Key = Console.ReadKey();
-
-				if (Key.KeyChar.ToString() == "w")
-				{
-
-					rectangle.Up();
-				}
-
-				if (Key.KeyChar.ToString() == "s")
-				{
-					rectangle.Down();
-				}
-
-				if (Key.KeyChar.ToString() == "a")
-				{
-					rectangle.Left();
-				}
-
-				if (Key.KeyChar.ToString() == "d")
-				{
-					rectangle.Right();
-				}
-
-			} while (x == 0);
-			*/
-
-			/*
-			HorizontalShape horizontalShape = new HorizontalShape();
-			horizontalShape.InitPrint();
-			Display.OverAllDraw();
-			*/
-			initialization();
-
-			MainLoop();
+				//Console.WriteLine(RandomClassLibrary.Random.GetRandomInteger(0, 6));
+				Console.WriteLine(random.Next(0, 6));
+				Console.ReadKey();
+			}
 
 			Console.ReadKey();
 		}
@@ -68,26 +38,28 @@ namespace MovingObjectAtConsoleOutput
 
 			SelectFallingShapeIndex();
 
-			Pixel pixel = new Pixel();
+			Pixel.OverallDisplay();
 
-			pixel.OverallDisplay();
+			Random random = new Random();
+			ShapeIndex = random.Next(0, 6);
 
 			do
 			{
 				char key = Console.ReadKey(true).KeyChar;
 				Display.Move(key);
-				pixel.OverallDisplay();
+				Pixel.OverallDisplay();
 
 			} while (true);
 		}
 
 		public static void SelectFallingShapeIndex()
 		{
-			FallingShape fallingShape = FallingShape.ZShape;
+
+			FallingShape fallingShape = FallingShape.SShape;
 
 			int fallingShapeIndex = (int)fallingShape;
 
-			switch (fallingShapeIndex)
+			switch (ShapeIndex)
 			{
 				case 0:
 					HorizontalShape horizontalShape = new HorizontalShape();
@@ -132,317 +104,62 @@ namespace MovingObjectAtConsoleOutput
 					break;
 			}
 		}
+
+		public static bool IsTouchLeftBorder()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				if (Pixel.GetPixel(0, j).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsTouchRightBorder()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				if (Pixel.GetPixel(Display.width - 1, j).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsTouchLowerBorder()
+		{
+			for (int i = 0; i < Display.width; i++)
+			{
+				if (Pixel.GetPixel(i, Display.height - 1).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static void SetShapeToStatic()
+		{
+			foreach (Pixel item in Pixel.DisplayMatrix)
+			{
+				if (item.IsDisplayed)
+				{
+					item.IsDisplayed = false;
+					item.Isplaced = true;
+				}
+			}
+		}
+
+		public static int ShapeIndex { get; set; }
 	}
-
-	/*	class Rectangle
-		{
-			public int Width { get; set; }
-			public int Height { get; set; }
-			public int PosX { get; set; }
-			public int PosY { get; set; }
-
-			public Rectangle()                                                               //Constructor
-			{
-				Width = 5;
-				Height = 5;
-				PosX = 2;
-				PosY = 2;
-			}
-
-			static int DisplayMatrixWidth = 10;
-			static int DisplayMatrixHeight = 10;
-			bool[,] DisplayMatrix = new bool[DisplayMatrixWidth, DisplayMatrixHeight];
-
-			public void SetLocation()
-			{
-				int i = PosX, j = PosY;
-				for (i = PosX; i < Width + PosX; i++)                                        // Draw Upper & Lower Side
-				{
-					DisplayMatrix[i, PosY] = true;
-					DisplayMatrix[i, Height + PosY - 1] = true;
-				}
-				for (j = PosY; j < Height + PosY; j++)                                       // Draw Left & Right Side
-				{
-					DisplayMatrix[PosX, j] = true;
-					DisplayMatrix[Width + PosX - 1, j] = true;
-				}
-			}
-
-			public void Print()
-			{
-				Console.Clear();
-
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							Console.Write("■");
-						}
-						else
-						{
-							Console.Write("□");
-						}
-					}
-					Console.WriteLine("");
-				}
-			}
-
-			public void Moving(object sender, EventArgs e)
-			{
-
-			}
-
-			public void Left()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i - 1, j] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Right()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = DisplayMatrixWidth - 1; i >= 0; i--)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i + 1, j] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Up()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i, j - 1] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Down()
-			{
-				for (int j = DisplayMatrixHeight - 1; j >= 0; j--)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i, j + 1] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-		}
-
-		public class Display
-		{
-			public static int Width
-			{
-				get
-				{
-					return 10;
-				}
-			}
-
-			public static int Height
-			{
-				get
-				{
-					return 16;
-				}
-			}
-
-
-			public static void OverAllDraw()
-			{
-				for (int j = 0; j < Height; j++)
-				{
-					for (int i = 0; i < Width; i++)
-					{
-						if (Shape.DisplayMatrixExchanger()[i,j].IsPixelPrinted)
-						{
-							Console.Write("■");
-						}
-						else
-						{
-							Console.Write("□");
-						}
-						Console.WriteLine();
-					}
-				}
-			}
-		}
-
-		public class Shape
-		{
-			public static Shape[,] DisplayMatrix = new Shape[Display.Width,Display.Height];                            // Define a gameboard that is 10 in Length and 16 in height
-
-			public static Shape[,] DisplayMatrixExchanger()
-			{
-				return DisplayMatrix;
-			}
-
-			public bool IsPixelPrinted { get; set; }
-
-			public int PositionX { get; set; }
-
-			public int PositionY { get; set; }
-
-			public Shape()                                                                             // Constructor
-			{
-				IsPixelPrinted = false;
-				PositionX = 5;
-				PositionY = 0;
-
-				for (int j = 0; j < Display.Height; j++)
-				{
-					for (int i = 0; i < Display.Width; i++)
-					{
-						DisplayMatrix[i, j] = new Shape();
-					}
-				}
-
-			}
-
-			public void InitPrintPixel(int i, int j)                                                   // This block of code seems to be redundant
-			{
-				DisplayMatrix[i,j].IsPixelPrinted = true;
-			}
-		}
-
-		public class HorizontalShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;
-				DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted = true;
-			}
-
-			public void Rotate()                                                                       // Rotate about the second block
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY + 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┤
-			}                                                                                          //   └─┘
-
-		}
-
-		public class SShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-			public void Rotate()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┼─┤
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //     └─┘
-			}
-		}
-
-		public class LShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
-			}
-
-			public void Rotate()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┘
-			}
-		}
-
-		public class TShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   └─┴─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-		}
-
-		public class OShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-			public void Rotate()
-			{
-				// It has no ROTATE method
-			}
-		}
-	*/
-
 
 	class Display
 	{
-		protected static int width { get; set; } = 10;
-		protected static int height { get; set; } = 16;
+		public static int width { get; set; } = 10;
+		public static int height { get; set; } = 16;
 
 		public static void Move(char key)
 		{
@@ -488,7 +205,7 @@ namespace MovingObjectAtConsoleOutput
 			return DisplayMatrix[i,j];
 		}
 
-		public void OverallDisplay()
+		public static void OverallDisplay()
 		{
 			for (int j = 0; j < 16; j++)
 			{
@@ -537,19 +254,28 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitLeft()
 		{
-			AnchorPointX--;
+			if (!Program.IsTouchLeftBorder())
+			{
+				AnchorPointX--;
+			}
 			RemovePreviousDisplay();
 		}
 
 		public void InitRight()
 		{
-			AnchorPointX++;
+			if (!Program.IsTouchRightBorder())
+			{
+				AnchorPointX++;
+			}
 			RemovePreviousDisplay();
 		}
 
 		public void InitDown()
 		{
-			AnchorPointY++;
+			if (!Program.IsTouchLowerBorder())
+			{
+				AnchorPointY++;
+			}
 			RemovePreviousDisplay();
 		}
 
