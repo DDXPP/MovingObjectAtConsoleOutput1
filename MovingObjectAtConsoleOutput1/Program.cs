@@ -10,45 +10,6 @@ namespace MovingObjectAtConsoleOutput
 	{
 		static void Main(string[] args)
 		{
-			/*
-			int x = 0;
-			Rectangle rectangle = new Rectangle();
-			rectangle.SetLocation();
-			rectangle.Print();
-			Console.CursorVisible = false;
-			do
-			{
-				ConsoleKeyInfo Key = Console.ReadKey();
-
-				if (Key.KeyChar.ToString() == "w")
-				{
-
-					rectangle.Up();
-				}
-
-				if (Key.KeyChar.ToString() == "s")
-				{
-					rectangle.Down();
-				}
-
-				if (Key.KeyChar.ToString() == "a")
-				{
-					rectangle.Left();
-				}
-
-				if (Key.KeyChar.ToString() == "d")
-				{
-					rectangle.Right();
-				}
-
-			} while (x == 0);
-			*/
-
-			/*
-			HorizontalShape horizontalShape = new HorizontalShape();
-			horizontalShape.InitPrint();
-			Display.OverAllDraw();
-			*/
 			initialization();
 
 			MainLoop();
@@ -66,332 +27,193 @@ namespace MovingObjectAtConsoleOutput
 		{
 			Console.Clear();
 
-			Shape.initDisplayDelegate = LShape.InitDisplay;
 
-			Pixel pixel = new Pixel();
+			Pixel.OverallDisplay();
+
 
 			do
 			{
-				Shape.initDisplayDelegate();
-				pixel.OverallDisplay();
-				char key = Console.ReadKey(true).KeyChar;
-				Display.Move(key);
-				Console.Clear();
-				Shape.initDisplayDelegate();
+				ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
+				SelectFallingShapeIndex();
+
+				Shape.AnchorPointX = 5;
+				Shape.AnchorPointY = 0;
+
+				do
+				{
+					char key = Console.ReadKey(true).KeyChar;
+					Display.Move(key);
+					Pixel.OverallDisplay();
+
+				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
 
 			} while (true);
+
 		}
+
+		public static void SelectFallingShapeIndex()
+		{
+
+			FallingShape fallingShape = FallingShape.SShape;
+
+			int fallingShapeIndex = (int)fallingShape;
+
+			switch (ShapeIndex)
+			{
+				case 0:
+					HorizontalShape horizontalShape = new HorizontalShape();
+					Shape.initDisplayDelegate = horizontalShape.InitDisplay;
+					Shape.initRotateDelegate = horizontalShape.InitRotate;
+					break;
+
+				case 1:
+					SShape sShape = new SShape();
+					Shape.initDisplayDelegate = sShape.InitDisplay;
+					Shape.initRotateDelegate = sShape.InitRotate;
+					break;
+
+				case 2:
+					ZShape zShape = new ZShape();
+					Shape.initDisplayDelegate = zShape.InitDisplay;
+					Shape.initRotateDelegate = zShape.InitRotate;
+					break;
+
+				case 3:
+					LShape lShape = new LShape();
+					Shape.initDisplayDelegate = lShape.InitDisplay;
+					Shape.initRotateDelegate = lShape.InitRotate;
+					break;
+
+				case 4:
+					JShape jShape = new JShape();
+					Shape.initDisplayDelegate = jShape.InitDisplay;
+					Shape.initRotateDelegate = jShape.InitRotate;
+					break;
+
+				case 5:
+					TShape tShape = new TShape();
+					Shape.initDisplayDelegate = tShape.InitDisplay;
+					Shape.initRotateDelegate = tShape.InitRotate;
+					break;
+
+				case 6:
+					OShape oShape = new OShape();
+					Shape.initDisplayDelegate = oShape.InitDisplay;
+					Shape.initRotateDelegate = oShape.InitRotate;
+					break;
+			}
+		}
+
+		public static bool IsTouchLeftBorder()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				if (Pixel.GetPixel(0, j).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsTouchRightBorder()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				if (Pixel.GetPixel(Display.width - 1, j).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsTouchLowerBorder()
+		{
+			for (int i = 0; i < Display.width; i++)
+			{
+				if (Pixel.GetPixel(i, Display.height - 1).IsDisplayed)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsTouchPileLeftSurface()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i - 1, j).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+
+		public static bool IsTouchPileRightSurface()
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i + 1, j).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+
+		public static bool IsTouchPileLowerSurface()                                               // Must be PRIOR to the "IsTouchLowerBoarder" statement
+		{
+			for (int j = 0; j < Display.height; j++)
+			{
+				for (int i = 0; i < Display.width; i++)
+				{
+					if (Pixel.GetPixel(i, j).IsDisplayed)
+					{
+						if (Pixel.GetPixel(i, j + 1).Isplaced)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		public static void SetShapeToStatic()
+		{
+			foreach (Pixel item in Pixel.DisplayMatrix)
+			{
+				if (item.IsDisplayed)
+				{
+					item.IsDisplayed = false;
+					item.Isplaced = true;
+				}
+			}
+		}
+		public static int ShapeIndex { get; set; }
 	}
-
-	/*	class Rectangle
-		{
-			public int Width { get; set; }
-			public int Height { get; set; }
-			public int PosX { get; set; }
-			public int PosY { get; set; }
-
-			public Rectangle()                                                               //Constructor
-			{
-				Width = 5;
-				Height = 5;
-				PosX = 2;
-				PosY = 2;
-			}
-
-			static int DisplayMatrixWidth = 10;
-			static int DisplayMatrixHeight = 10;
-			bool[,] DisplayMatrix = new bool[DisplayMatrixWidth, DisplayMatrixHeight];
-
-			public void SetLocation()
-			{
-				int i = PosX, j = PosY;
-				for (i = PosX; i < Width + PosX; i++)                                        // Draw Upper & Lower Side
-				{
-					DisplayMatrix[i, PosY] = true;
-					DisplayMatrix[i, Height + PosY - 1] = true;
-				}
-				for (j = PosY; j < Height + PosY; j++)                                       // Draw Left & Right Side
-				{
-					DisplayMatrix[PosX, j] = true;
-					DisplayMatrix[Width + PosX - 1, j] = true;
-				}
-			}
-
-			public void Print()
-			{
-				Console.Clear();
-
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							Console.Write("■");
-						}
-						else
-						{
-							Console.Write("□");
-						}
-					}
-					Console.WriteLine("");
-				}
-			}
-
-			public void Moving(object sender, EventArgs e)
-			{
-
-			}
-
-			public void Left()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i - 1, j] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Right()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = DisplayMatrixWidth - 1; i >= 0; i--)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i + 1, j] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Up()
-			{
-				for (int j = 0; j < DisplayMatrixHeight; j++)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i, j - 1] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-			public void Down()
-			{
-				for (int j = DisplayMatrixHeight - 1; j >= 0; j--)
-				{
-					for (int i = 0; i < DisplayMatrixWidth; i++)
-					{
-						if (DisplayMatrix[i, j] == true)
-						{
-							DisplayMatrix[i, j] = false;
-							DisplayMatrix[i, j + 1] = true;
-						}
-					}
-				}
-				Print();
-			}
-
-		}
-
-		public class Display
-		{
-			public static int Width
-			{
-				get
-				{
-					return 10;
-				}
-			}
-
-			public static int Height
-			{
-				get
-				{
-					return 16;
-				}
-			}
-
-
-			public static void OverAllDraw()
-			{
-				for (int j = 0; j < Height; j++)
-				{
-					for (int i = 0; i < Width; i++)
-					{
-						if (Shape.DisplayMatrixExchanger()[i,j].IsPixelPrinted)
-						{
-							Console.Write("■");
-						}
-						else
-						{
-							Console.Write("□");
-						}
-						Console.WriteLine();
-					}
-				}
-			}
-		}
-
-		public class Shape
-		{
-			public static Shape[,] DisplayMatrix = new Shape[Display.Width,Display.Height];                            // Define a gameboard that is 10 in Length and 16 in height
-
-			public static Shape[,] DisplayMatrixExchanger()
-			{
-				return DisplayMatrix;
-			}
-
-			public bool IsPixelPrinted { get; set; }
-
-			public int PositionX { get; set; }
-
-			public int PositionY { get; set; }
-
-			public Shape()                                                                             // Constructor
-			{
-				IsPixelPrinted = false;
-				PositionX = 5;
-				PositionY = 0;
-
-				for (int j = 0; j < Display.Height; j++)
-				{
-					for (int i = 0; i < Display.Width; i++)
-					{
-						DisplayMatrix[i, j] = new Shape();
-					}
-				}
-
-			}
-
-			public void InitPrintPixel(int i, int j)                                                   // This block of code seems to be redundant
-			{
-				DisplayMatrix[i,j].IsPixelPrinted = true;
-			}
-		}
-
-		public class HorizontalShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┬─┬─┐
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┴─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;
-				DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted = true;
-			}
-
-			public void Rotate()                                                                       // Rotate about the second block
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 2, PositionY]    .IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY + 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┤
-			}                                                                                          //   └─┘
-
-		}
-
-		public class SShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┬─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ┌─┼─┼─┘
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-			public void Rotate()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX - 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┼─┤
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //     └─┘
-			}
-		}
-
-		public class LShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted = true;             //   └─┴─┘
-			}
-
-			public void Rotate()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted =false;
-				DisplayMatrix[PositionX + 1, PositionY - 2].IsPixelPrinted =false;
-
-				DisplayMatrix[PositionX - 1, PositionY - 1].IsPixelPrinted = true;             //   ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ├─┤
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;             //   ├─┼─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   └─┴─┘
-			}
-		}
-
-		public class TShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //     ┌─┐
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   ┌─┼─┼─┐
-				DisplayMatrix[PositionX, PositionY - 2]    .IsPixelPrinted = true;             //   └─┴─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-		}
-
-		public class OShape : Shape
-		{
-			public void InitPrint()
-			{
-				DisplayMatrix[PositionX, PositionY]        .IsPixelPrinted = true;             //   ┌─┬─┐
-				DisplayMatrix[PositionX + 1, PositionY]    .IsPixelPrinted = true;             //   ├─┼─┤
-				DisplayMatrix[PositionX, PositionY - 1]    .IsPixelPrinted = true;             //   └─┴─┘
-				DisplayMatrix[PositionX + 1, PositionY - 1].IsPixelPrinted = true;
-			}
-
-			public void Rotate()
-			{
-				// It has no ROTATE method
-			}
-		}
-	*/
-
 
 	class Display
 	{
-		protected static int width { get; set; } = 10;
-		protected static int height { get; set; } = 16;
+		public static int width { get; set; } = 10;
+		public static int height { get; set; } = 16;
 
 		public static void Move(char key)
 		{
@@ -401,18 +223,38 @@ namespace MovingObjectAtConsoleOutput
 			{
 				case "w":
 					shape.InitUp();
+					Console.Clear();
 					break;
 
 				case "s":
 					shape.InitDown();
+					Console.Clear();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
+
 					break;
 
 				case "a":
+					Console.Clear();
 					shape.InitLeft();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
 					break;
 
 				case "d":
+					Console.Clear();
 					shape.InitRight();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
 					break;
 			}
 		}
@@ -430,13 +272,13 @@ namespace MovingObjectAtConsoleOutput
 			return DisplayMatrix[i,j];
 		}
 
-		public void OverallDisplay()
+		public static void OverallDisplay()
 		{
 			for (int j = 0; j < 16; j++)
 			{
 				for (int i = 0; i < 10; i++)
 				{
-					if (GetPixel(i, j).IsDisplayed)
+					if (GetPixel(i, j).IsDisplayed || GetPixel(i,j).Isplaced)
 					{
 						Console.Write("■");
 					}
@@ -464,36 +306,48 @@ namespace MovingObjectAtConsoleOutput
 
 	class Shape : Display
 	{
-		protected static int AnchorPointX { get; set; } = 4;
-		protected static int AnchorPointY { get; set; } = 0;
+		public static int AnchorPointX { get; set; } = 4;
+		public static int AnchorPointY { get; set; } = 0;
 		protected static int RotationIndex { get; set; } = 0;
 
 		public void InitUp()
 		{
-			InitRotate();
+			Program.SelectFallingShapeIndex();
+
+			RemovePreviousDisplay();
+
+			initRotateDelegate();
 		}
 
 		public void InitLeft()
 		{
-			AnchorPointX--;
+			if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
+			{
+				AnchorPointX--;
+			}
 			RemovePreviousDisplay();
 		}
 
 		public void InitRight()
 		{
-			AnchorPointX++;
+			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
+			{
+				AnchorPointX++;
+			}
 			RemovePreviousDisplay();
 		}
 
 		public void InitDown()
 		{
-			AnchorPointY++;
+			if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+			{
+				AnchorPointY++;
+			}
+			else
+			{
+				Program.SetShapeToStatic();
+			}
 			RemovePreviousDisplay();
-		}
-
-		protected virtual void InitRotate()                                                        // Assume the shapes are transformed in a [16, 16] pixel space
-		{
-
 		}
 
 		public void RemovePreviousDisplay()
@@ -505,30 +359,43 @@ namespace MovingObjectAtConsoleOutput
 					Pixel.GetPixel(i, j).IsDisplayed = false;
 				}
 			}
-
 		}
 
 		public delegate void InitDisplayDelegate();
 		public static InitDisplayDelegate initDisplayDelegate;
+		public static InitDisplayDelegate initRotateDelegate;
 	}
 
 	class HorizontalShape : Shape
 	{
-		
-		public static void InitDisplay()                                                           // Anchor point is set to (1, 0)
+		public void InitDisplay()
 		{
-			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         // ┌─┬─┬─┬─┐
-			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     // └─┴─┴─┴─┘
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;
-			Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
+			SetPosition();
 		}
 
-		
-		protected override void InitRotate()                                                       // Anchor point remains unchanged
+		public void InitRotate()                                                       // Anchor point remains unchanged
+		{
+			if (RotationIndex == 1)
+			{
+				RotationIndex = 0;
+			}
+			else
+			{
+				RotationIndex++;
+			}
+
+			SetPosition();
+		}
+
+		public void SetPosition()
 		{
 			switch (RotationIndex)
 			{
-				case 0:
+				case 0:                                                                            // Anchor point is set to (1, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┬─┬─┐
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // └─┴─┴─┴─┘
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;
+					Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
 					break;
 
 				case 1:
@@ -538,32 +405,40 @@ namespace MovingObjectAtConsoleOutput
 					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┤
 					break;                                                                         // └─┘
 			}
+		}
+	}
 
-			RotationIndex++;
+	class SShape : Shape
+	{
+		public void InitDisplay()
+		{
+			SetPosition();
+		}
+
+		public void InitRotate()
+		{
 
 			if (RotationIndex == 1)
 			{
 				RotationIndex = 0;
 			}
-		}
-		
-	}
+			else
+			{
+				RotationIndex++;
+			}
 
-	class SShape : Shape
-	{
-		public static void InitDisplay()                                                           // Anchor point is set to (1, 0)
-		{
-			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     // ┌─┼─┼─┘
-			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // └─┴─┘
-			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+			SetPosition();
 		}
 
-		protected override void InitRotate()
+		public void SetPosition()
 		{
 			switch (RotationIndex)
 			{
-				case 0:
+				case 0:                                                                            // Anchor point is set to (1, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┬─┐
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┼─┼─┘
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┘
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
 					break;
 
 				case 1:                                                                            // Anchor point remains unchanged
@@ -571,34 +446,81 @@ namespace MovingObjectAtConsoleOutput
 					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ├─┼─┐
 					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┼─┤
 					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             //   └─┘
-					break;   
+					break;
 			}
+		}
+	}
 
-			RotationIndex++;
+	class ZShape : Shape
+	{
+		public void InitDisplay()
+		{
+			SetPosition();
+		}
 
+		public void InitRotate()
+		{
 			if (RotationIndex == 1)
 			{
 				RotationIndex = 0;
 			}
+			else
+			{
+				RotationIndex++;
+			}
+			SetPosition();
 		}
 
+		public void SetPosition()
+		{
+			switch (RotationIndex)
+			{
+				case 0:                                                                            // Anchor point is set to (1, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┐
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // └─┼─┼─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   └─┴─┘
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
+					break;
+
+				case 1:                                                                            // Anchor point remains unchanged
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;         //   ┌─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┼─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┘
+					break;
+			}
+		}
 	}
 
 	class LShape : Shape
 	{
-		public static void InitDisplay()                                                           // Anchor point is set to (0, 0)
+		public void InitDisplay()
 		{
-			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         // ┌─┐
-			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ├─┤
-			Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;                     // ├─┼─┐
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 2).IsDisplayed = true;                 // └─┴─┘
+			SetPosition();
 		}
 
-		protected override void InitRotate()
+		public void InitRotate()
 		{
+			if (RotationIndex == 3)
+			{
+				RotationIndex = 0;
+			}
+			else
+			{
+				RotationIndex++;
+			}
+			SetPosition();
+		}
+
+		public void SetPosition()
+		{ 
 			switch (RotationIndex)
 			{
-				case 0:
+				case 0:                                                                            // Anchor point is set to (0, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┼─┐
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
 					break;
 
 				case 1:                                                                            // Anchor point is changed to (1, 0)
@@ -622,32 +544,96 @@ namespace MovingObjectAtConsoleOutput
 					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
 					break;
 			}
+		}
+	}
 
-			RotationIndex++;
+	class JShape : Shape
+	{
+		public void InitDisplay()
+		{
+			SetPosition();
+		}
 
-			if (RotationIndex == 4)
+		public void InitRotate()
+		{
+			if (RotationIndex == 3)
 			{
 				RotationIndex = 0;
+			}
+			else
+			{
+				RotationIndex++;
+			}
+
+			SetPosition();
+		}
+
+		public void SetPosition()
+		{
+			switch (RotationIndex)
+			{
+				case 0:                                                                            // Anchor point is set to (1, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   ├─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ┌─┼─┤
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
+					break;
+
+				case 1:                                                                            // Anchor point remains unchanged
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┐
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;         // ├─┼─┬─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┴─┘
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+					break;
+
+				case 2:                                                                            // Anchor point remians unchanged
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ├─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // └─┘
+					break;
+
+				case 3:                                                                            // Anchor point remain unchanged
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┬─┐
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┼─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //     └─┘
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
+					break;
 			}
 		}
 	}
 
 	class TShape : Shape
 	{
-		public static void InitDisplay()                                                           // Anchor point is set to (1, 0)
+		public void InitDisplay()
 		{
-			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
-			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ┌─┼─┼─┐
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┴─┴─┘
-			Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+			SetPosition();
 		}
 
 
-		protected override void InitRotate()
+		public void InitRotate()
+		{
+			if (RotationIndex == 3)
+			{
+				RotationIndex = 0;
+			}
+			else
+			{
+				RotationIndex++;
+			}
+
+			SetPosition();
+		}
+
+		public void SetPosition()
 		{
 			switch (RotationIndex)
 			{
-				case 0:
+				case 0:                                                                                    // Anchor point is set to (1, 0)
+					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ┌─┼─┼─┐
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┴─┴─┘
+					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
 					break;
 
 				case 1:                                                                                    // Anchor point remains unchanged
@@ -671,30 +657,28 @@ namespace MovingObjectAtConsoleOutput
 					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   └─┘
 					break;
 			}
-
-			RotationIndex++;
-
-			if (RotationIndex == 4)
-			{
-				RotationIndex = 0;
-			}
-			
 		}
 	}
 
 	class OShape : Shape
 	{
-		public static void InitDisplay()                                                           // Anchor point is set to (0, 0)
+		public void InitDisplay()
+		{
+			SetPosition();
+		}
+
+		public void InitRotate()
+		{
+			SetPosition();
+			// It has no ROTATE method
+		}
+
+		public void SetPosition()                                                                  // Anchor point is set to (0, 0)
 		{
 			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
 			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
 			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   └─┴─┘
 			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
-		}
-
-		protected override void InitRotate()
-		{
-			// It has no ROTATE method
 		}
 	}
 
@@ -705,5 +689,16 @@ namespace MovingObjectAtConsoleOutput
 		Right,
 		Left
 	}
+
+	enum FallingShape
+	{
+		HorizonShape,
+		SShape,
+		ZShape,
+		LShape,
+		JShape,
+		TShape,
+		OShape
+	};
 }
 
