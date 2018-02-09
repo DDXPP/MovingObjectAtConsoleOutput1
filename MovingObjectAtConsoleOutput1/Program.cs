@@ -8,6 +8,8 @@ namespace MovingObjectAtConsoleOutput
 {
 	class Program
 	{
+		public static int ShapeIndex { get; set; }
+
 		static void Main(string[] args)
 		{
 			initialization();
@@ -27,9 +29,7 @@ namespace MovingObjectAtConsoleOutput
 		{
 			Console.Clear();
 
-
 			Pixel.OverallDisplay();
-
 
 			do
 			{
@@ -48,16 +48,10 @@ namespace MovingObjectAtConsoleOutput
 				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
 
 			} while (true);
-
 		}
 
 		public static void SelectFallingShapeIndex()
 		{
-
-			FallingShape fallingShape = FallingShape.SShape;
-
-			int fallingShapeIndex = (int)fallingShape;
-
 			switch (ShapeIndex)
 			{
 				case 0:
@@ -177,7 +171,6 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-
 		public static bool IsTouchPileLowerSurface()                                               // Must be PRIOR to the "IsTouchLowerBoarder" statement
 		{
 			for (int j = 0; j < Display.height; j++)
@@ -207,7 +200,6 @@ namespace MovingObjectAtConsoleOutput
 				}
 			}
 		}
-		public static int ShapeIndex { get; set; }
 	}
 
 	class Display
@@ -234,7 +226,6 @@ namespace MovingObjectAtConsoleOutput
 					{
 						Shape.initDisplayDelegate();
 					}
-
 					break;
 
 				case "a":
@@ -300,7 +291,6 @@ namespace MovingObjectAtConsoleOutput
 					DisplayMatrix[i, j] = new Pixel();
 				}
 			}
-
 		}
 	}
 
@@ -325,6 +315,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				AnchorPointX--;
 			}
+
 			RemovePreviousDisplay();
 		}
 
@@ -334,6 +325,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				AnchorPointX++;
 			}
+
 			RemovePreviousDisplay();
 		}
 
@@ -347,6 +339,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				Program.SetShapeToStatic();
 			}
+
 			RemovePreviousDisplay();
 		}
 
@@ -468,6 +461,7 @@ namespace MovingObjectAtConsoleOutput
 			{
 				RotationIndex++;
 			}
+
 			SetPosition();
 		}
 
@@ -689,16 +683,5 @@ namespace MovingObjectAtConsoleOutput
 		Right,
 		Left
 	}
-
-	enum FallingShape
-	{
-		HorizonShape,
-		SShape,
-		ZShape,
-		LShape,
-		JShape,
-		TShape,
-		OShape
-	};
 }
 
