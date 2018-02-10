@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace MovingObjectAtConsoleOutput
 {
@@ -37,8 +37,12 @@ namespace MovingObjectAtConsoleOutput
 				ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
 				SelectFallingShapeIndex();
 
+				Thread ChildThread = new Thread();
+
 				Shape.AnchorPointX = 5;
 				Shape.AnchorPointY = 0;
+
+				Shape.RotationIndex = 0;
 
 				do
 				{
@@ -101,7 +105,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsTouchLeftBorder()
 		{
-			for (int j = 0; j < Display.height; j++)
+			for (int j = 0; j < Display.Height; j++)
 			{
 				if (Pixel.GetPixel(0, j).IsDisplayed)
 				{
@@ -113,9 +117,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsTouchRightBorder()
 		{
-			for (int j = 0; j < Display.height; j++)
+			for (int j = 0; j < Display.Height; j++)
 			{
-				if (Pixel.GetPixel(Display.width - 1, j).IsDisplayed)
+				if (Pixel.GetPixel(Display.Width - 1, j).IsDisplayed)
 				{
 					return true;
 				}
@@ -125,9 +129,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsTouchLowerBorder()
 		{
-			for (int i = 0; i < Display.width; i++)
+			for (int i = 0; i < Display.Width; i++)
 			{
-				if (Pixel.GetPixel(i, Display.height - 1).IsDisplayed)
+				if (Pixel.GetPixel(i, Display.Height - 1).IsDisplayed)
 				{
 					return true;
 				}
@@ -137,9 +141,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsTouchPileLeftSurface()
 		{
-			for (int j = 0; j < Display.height; j++)
+			for (int j = 0; j < Display.Height; j++)
 			{
-				for (int i = 0; i < Display.width; i++)
+				for (int i = 0; i < Display.Width; i++)
 				{
 					if (Pixel.GetPixel(i, j).IsDisplayed)
 					{
@@ -153,12 +157,11 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-
 		public static bool IsTouchPileRightSurface()
 		{
-			for (int j = 0; j < Display.height; j++)
+			for (int j = 0; j < Display.Height; j++)
 			{
-				for (int i = 0; i < Display.width; i++)
+				for (int i = 0; i < Display.Width; i++)
 				{
 					if (Pixel.GetPixel(i, j).IsDisplayed)
 					{
@@ -174,9 +177,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsTouchPileLowerSurface()                                               // Must be stated after the "IsTouchLowerBoarder" statement
 		{
-			for (int j = 0; j < Display.height; j++)
+			for (int j = 0; j < Display.Height; j++)
 			{
-				for (int i = 0; i < Display.width; i++)
+				for (int i = 0; i < Display.Width; i++)
 				{
 					if (Pixel.GetPixel(i, j).IsDisplayed)
 					{
@@ -205,8 +208,8 @@ namespace MovingObjectAtConsoleOutput
 
 	class Display
 	{
-		public static int width { get; set; } = 10;
-		public static int height { get; set; } = 16;
+		public static int Width { get; set; } = 10;
+		public static int Height { get; set; } = 16;
 
 		public static void Move(char key)
 		{
@@ -258,9 +261,9 @@ namespace MovingObjectAtConsoleOutput
 
 		public static bool IsRowFilled(int j)
 		{
-			for (int i = 0; i < width; i++)
+			for (int i = 0; i < Width; i++)
 			{
-				if (!Pixel.GetPixel(i, j).Isplaced && !Pixel.GetPixel(i, j).IsDisplayed)
+				if (!Pixel.GetPixel(i, j).Isplaced)
 				{
 					return false;
 				}
@@ -268,25 +271,54 @@ namespace MovingObjectAtConsoleOutput
 			return true;
 		}
 
-		public static void EliminateRow()
+		public static bool IsRowFilled()
 		{
-			for (int j = 0; j < height; j++)
+			int PixelsInOneRow = 0;
+
+			for (int j = Height - 1; j >= 0; j--)
+			{
+				for (int i = 0; i < Width; i++)
+				{
+					if (Pixel.GetPixel(i, j).Isplaced)
+					{
+						PixelsInOneRow++;
+					}
+				}
+
+				if (PixelsInOneRow == Width)
+				{
+					return true;
+				}
+				else
+				{
+					PixelsInOneRow = 0;
+				}
+			}
+			return false;
+		}
+
+		public static void EliminateAndMoveRow()
+		{
+			for (int j = Height - 1; j >= 0; j--)
 			{
 				if (IsRowFilled(j))
 				{
-					for (int i = 0; i < width; i++)
+					for (int i = 0; i < Width; i++)
 					{
 						Pixel.GetPixel(i, j).IsDisplayed = false;
 						Pixel.GetPixel(i, j).Isplaced = false;
 					}
 
-					for (int upperj = j - 1; upperj >= 0; j--)
+					for (int upperj = j - 1; upperj >= 0; upperj--)
 					{
-						for (int i = 0; i < width; i++)
+						for (int i = 0; i < Width; i++)
 						{
-							Pixel.GetPixel(i, upperj).Isplaced = false;
-							Pixel.GetPixel(i, upperj).IsDisplayed = false;
-							Pixel.GetPixel(i, upperj + 1).Isplaced = true;
+							if (Pixel.GetPixel(i, upperj).Isplaced || Pixel.GetPixel(i, upperj).IsDisplayed)
+							{
+								Pixel.GetPixel(i, upperj).Isplaced = false;
+								Pixel.GetPixel(i, upperj).IsDisplayed = false;
+								Pixel.GetPixel(i, upperj + 1).Isplaced = true;					
+							}
 						}
 					}
 				}
@@ -299,7 +331,7 @@ namespace MovingObjectAtConsoleOutput
 		public bool IsDisplayed = false;
 		public bool Isplaced = false;
 
-		public static Pixel[,] DisplayMatrix = new Pixel[width, height];
+		public static Pixel[,] DisplayMatrix = new Pixel[Width, Height];
 
 		public static Pixel GetPixel(int i, int j)
 		{
@@ -341,7 +373,7 @@ namespace MovingObjectAtConsoleOutput
 	{
 		public static int AnchorPointX { get; set; } = 4;
 		public static int AnchorPointY { get; set; } = 0;
-		protected static int RotationIndex { get; set; } = 0;
+		public static int RotationIndex { get; set; } = 0;
 
 		public void InitUp()
 		{
@@ -365,6 +397,11 @@ namespace MovingObjectAtConsoleOutput
 			if (Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
 				Program.SetShapeToStatic();
+
+				if (IsRowFilled())
+				{
+					EliminateAndMoveRow();
+				}
 			}
 
 			RemovePreviousDisplay();
@@ -380,6 +417,11 @@ namespace MovingObjectAtConsoleOutput
 			if(Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
 				Program.SetShapeToStatic();
+
+				if (IsRowFilled())
+				{
+					EliminateAndMoveRow();
+				}
 			}
 
 			RemovePreviousDisplay();
@@ -394,6 +436,11 @@ namespace MovingObjectAtConsoleOutput
 			else
 			{
 				Program.SetShapeToStatic();
+
+				if (IsRowFilled())
+				{
+					EliminateAndMoveRow();
+				}
 			}
 
 			RemovePreviousDisplay();
