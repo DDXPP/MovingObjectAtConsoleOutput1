@@ -9,6 +9,7 @@ namespace MovingObjectAtConsoleOutput
 	class Program
 	{
 		public static int ShapeIndex { get; set; }
+		public static int Score { get; set; }
 
 		static void Main(string[] args)
 		{
@@ -171,7 +172,7 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-		public static bool IsTouchPileLowerSurface()                                               // Must be PRIOR to the "IsTouchLowerBoarder" statement
+		public static bool IsTouchPileLowerSurface()                                               // Must be stated after the "IsTouchLowerBoarder" statement
 		{
 			for (int j = 0; j < Display.height; j++)
 			{
@@ -214,8 +215,13 @@ namespace MovingObjectAtConsoleOutput
 			switch (key.ToString())
 			{
 				case "w":
-					shape.InitUp();
 					Console.Clear();
+					shape.InitUp();
+
+					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
+					{
+						Shape.initRotateDelegate();
+					}
 					break;
 
 				case "s":
@@ -247,6 +253,43 @@ namespace MovingObjectAtConsoleOutput
 						Shape.initDisplayDelegate();
 					}
 					break;
+			}
+		}
+
+		public static bool IsRowFilled(int j)
+		{
+			for (int i = 0; i < width; i++)
+			{
+				if (!Pixel.GetPixel(i, j).Isplaced && !Pixel.GetPixel(i, j).IsDisplayed)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public static void EliminateRow()
+		{
+			for (int j = 0; j < height; j++)
+			{
+				if (IsRowFilled(j))
+				{
+					for (int i = 0; i < width; i++)
+					{
+						Pixel.GetPixel(i, j).IsDisplayed = false;
+						Pixel.GetPixel(i, j).Isplaced = false;
+					}
+
+					for (int upperj = j - 1; upperj >= 0; j--)
+					{
+						for (int i = 0; i < width; i++)
+						{
+							Pixel.GetPixel(i, upperj).Isplaced = false;
+							Pixel.GetPixel(i, upperj).IsDisplayed = false;
+							Pixel.GetPixel(i, upperj + 1).Isplaced = true;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -302,11 +345,14 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitUp()
 		{
-			Program.SelectFallingShapeIndex();
+				Program.SelectFallingShapeIndex();
+
+			if (Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
+			{
+				Program.SetShapeToStatic();
+			}
 
 			RemovePreviousDisplay();
-
-			initRotateDelegate();
 		}
 
 		public void InitLeft()
@@ -314,6 +360,11 @@ namespace MovingObjectAtConsoleOutput
 			if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
 			{
 				AnchorPointX--;
+			}
+
+			if (Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
+			{
+				Program.SetShapeToStatic();
 			}
 
 			RemovePreviousDisplay();
@@ -324,6 +375,11 @@ namespace MovingObjectAtConsoleOutput
 			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
 			{
 				AnchorPointX++;
+			}
+
+			if(Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
+			{
+				Program.SetShapeToStatic();
 			}
 
 			RemovePreviousDisplay();
@@ -366,7 +422,7 @@ namespace MovingObjectAtConsoleOutput
 			SetPosition();
 		}
 
-		public void InitRotate()                                                       // Anchor point remains unchanged
+		public void InitRotate()
 		{
 			if (RotationIndex == 1)
 			{
@@ -384,18 +440,18 @@ namespace MovingObjectAtConsoleOutput
 		{
 			switch (RotationIndex)
 			{
-				case 0:                                                                            // Anchor point is set to (1, 0)
+				case 0:                                                                            // Anchor point is set to (0, 0)
 					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┬─┬─┐
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // └─┴─┴─┴─┘
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;
+					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┴─┴─┘
 					Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
+					Pixel.GetPixel(AnchorPointX + 3, AnchorPointY).IsDisplayed = true;
 					break;
 
-				case 1:
+				case 1:                                                                            // Anchor point remains unchanged
 					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY - 1).IsDisplayed = true;             // ├─┤
 					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
 					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┤
+					Pixel.GetPixel(AnchorPointX, AnchorPointY + 3).IsDisplayed = true;             // ├─┤
 					break;                                                                         // └─┘
 			}
 		}
