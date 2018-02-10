@@ -37,7 +37,8 @@ namespace MovingObjectAtConsoleOutput
 				ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
 				SelectFallingShapeIndex();
 
-				Thread ChildThread = new Thread();
+				Thread ChildThread = new Thread(new ThreadStart(timer));
+				ChildThread.Start();
 
 				Shape.AnchorPointX = 5;
 				Shape.AnchorPointY = 0;
@@ -203,6 +204,27 @@ namespace MovingObjectAtConsoleOutput
 					item.Isplaced = true;
 				}
 			}
+		}
+
+		private static void timer()
+		{
+			Shape shape = new Shape();
+
+			do
+			{
+				shape.InitDown();
+				Console.Clear();
+
+				if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
+				{
+					Shape.initDisplayDelegate();
+				}
+
+				Pixel.OverallDisplay();
+
+				Thread.Sleep(500);
+
+			} while (true);
 		}
 	}
 
