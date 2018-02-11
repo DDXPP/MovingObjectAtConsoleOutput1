@@ -11,6 +11,8 @@ namespace MovingObjectAtConsoleOutput
 		public static int ShapeIndex { get; set; }
 		public static int Score { get; set; }
 
+		private static bool isMainThreadPaused { get; set; }
+
 		static void Main(string[] args)
 		{
 			initialization();
@@ -18,6 +20,7 @@ namespace MovingObjectAtConsoleOutput
 			MainLoop();
 
 			Console.ReadKey();
+
 		}
 
 		private static void initialization()
@@ -26,39 +29,39 @@ namespace MovingObjectAtConsoleOutput
 			pixel.Initialization();
 		}
 
+		public static Thread ChildThread = new Thread(new ThreadStart(timer));
+
 		private static void MainLoop()
 		{
 			Console.Clear();
 
 			Pixel.OverallDisplay();
 
+			ChildThread.Start();
+				
 			do
 			{
-				ShapeIndex = RandomClassLibrary.Random.GetRandomInteger(0, 6);
-				SelectFallingShapeIndex();
-
-				Thread ChildThread = new Thread(new ThreadStart(timer));
-				ChildThread.Start();
-
-				Shape.AnchorPointX = 5;
-				Shape.AnchorPointY = 0;
-
-				Shape.RotationIndex = 0;
-
-				do
+				if (isMainThreadPaused)
 				{
-					char key = Console.ReadKey(true).KeyChar;
-					Display.Move(key);
-					Pixel.OverallDisplay();
+					Thread.Sleep(2);
+				}
 
-				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
+				char key = Console.ReadKey(true).KeyChar;
+				Display.Move(key);
 
-			} while (true);
+				if (ShapeIndex == -1)
+				{
+					Environment.Exit(0);
+				}
+
+				Pixel.OverallDisplay();
+
+			} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
 		}
 
 		public static void SelectFallingShapeIndex()
 		{
-			switch (ShapeIndex)
+			switch (0)
 			{
 				case 0:
 					HorizontalShape horizontalShape = new HorizontalShape();
@@ -194,6 +197,26 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
+		public static bool IsGameOver()
+		{
+			for (int i = 0; i < Display.Width; i++)
+			{
+				if (Pixel.GetPixel(i, 0).Isplaced)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private static Thread gameOverThread = new Thread(new ThreadStart(Timer_GameOverAnimation));
+
+		public static void GameOver()
+		{
+			gameOverThread.Start();
+			ChildThread.Abort();
+		}
+
 		public static void SetShapeToStatic()
 		{
 			foreach (Pixel item in Pixel.DisplayMatrix)
@@ -212,19 +235,80 @@ namespace MovingObjectAtConsoleOutput
 
 			do
 			{
-				shape.InitDown();
+				ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
+				SelectFallingShapeIndex();
+
+				Shape.AnchorPointX = 5;
+				Shape.AnchorPointY = 0;
+
+				Shape.RotationIndex = 0;
+
+				do
+				{
+					isMainThreadPaused = true;
+
+					shape.InitDown();
+					Console.Clear();
+
+					if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
+					{
+						Shape.initDisplayDelegate();
+					}
+
+					Pixel.OverallDisplay();
+
+					if (IsGameOver())
+					{
+						GameOver();
+					}
+
+					isMainThreadPaused = false;
+
+					Thread.Sleep(500);
+
+				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
+
+			} while (true);
+		}
+
+		private static void Timer_GameOverAnimation()
+		{
+			int PixelCount;
+
+			do
+			{
+				PixelCount = 0;
+
+				Thread.Sleep(100);
+
 				Console.Clear();
 
-				if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
+				for (int j = 0; j < Display.Height; j++)
 				{
-					Shape.initDisplayDelegate();
+					for (int i = 0; i < Display.Width; i++)
+					{
+						AXDD_AnimationLibrary.Decay(0.1, Pixel.GetPixel(i, j));
+					}
 				}
 
 				Pixel.OverallDisplay();
 
-				Thread.Sleep(500);
 
-			} while (true);
+				foreach (Pixel item in Pixel.DisplayMatrix)
+				{
+					if (!item.Isplaced && !item.IsDisplayed)
+					{
+						PixelCount++;
+					}
+				}
+
+			} while (PixelCount != Display.Width * Display.Height);
+
+			ShapeIndex = -1;
+
+			Console.Clear();
+			Console.WriteLine("Game Over");
+			gameOverThread.Abort();
 		}
 	}
 
@@ -250,15 +334,19 @@ namespace MovingObjectAtConsoleOutput
 					break;
 
 				case "s":
+
+					/*
 					shape.InitDown();
 					Console.Clear();
-
+										
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
 					}
-					break;
+					*/
 
+					break;
+					
 				case "a":
 					Console.Clear();
 					shape.InitLeft();
@@ -343,6 +431,8 @@ namespace MovingObjectAtConsoleOutput
 							}
 						}
 					}
+
+					j++;
 				}
 			}
 		}
