@@ -1,6 +1,6 @@
 ﻿Public Class Random
 
-    Public Shared Function GetRandomInteger(Min As Integer, Max As Integer) As Integer
+    Public Shared Function GetRandom(Min As Integer, Max As Integer) As Integer
 
         Randomize()
 
@@ -18,7 +18,7 @@
 
     End Function
 
-    Public Shared Function GetRandomSingle() As Single
+    Public Shared Function GetRandom() As Double
 
         Randomize()
 
