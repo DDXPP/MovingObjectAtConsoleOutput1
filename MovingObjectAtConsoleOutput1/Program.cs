@@ -19,7 +19,6 @@ namespace MovingObjectAtConsoleOutput
 
 			MainLoop();
 
-			Console.ReadKey();
 
 		}
 
@@ -51,6 +50,8 @@ namespace MovingObjectAtConsoleOutput
 
 				if (ShapeIndex == -1)
 				{
+					Console.ReadKey();
+
 					Environment.Exit(0);
 				}
 
@@ -61,7 +62,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public static void SelectFallingShapeIndex()
 		{
-			switch (0)
+			switch (ShapeIndex)
 			{
 				case 0:
 					HorizontalShape horizontalShape = new HorizontalShape();
