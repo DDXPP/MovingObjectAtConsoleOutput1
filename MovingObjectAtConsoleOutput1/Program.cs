@@ -39,6 +39,7 @@ namespace MovingObjectAtConsoleOutput
 				
 			do
 			{
+
 				char key = Console.ReadKey(true).KeyChar;
 				Display.Move(key);
 
@@ -48,6 +49,7 @@ namespace MovingObjectAtConsoleOutput
 
 					Environment.Exit(0);
 				}
+				Console.Clear();
 
 				Pixel.OverallDisplay();
 
@@ -251,12 +253,13 @@ namespace MovingObjectAtConsoleOutput
 					isMainThreadPaused = true;
 
 					shape.InitDown();
-					Console.Clear();
 
 					if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
 					}
+
+					Console.Clear();
 
 					Pixel.OverallDisplay();
 
@@ -368,6 +371,9 @@ namespace MovingObjectAtConsoleOutput
 					{
 						Shape.initDisplayDelegate();
 					}
+					break;
+
+				default:
 					break;
 			}
 		}
@@ -556,10 +562,6 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitRight()
 		{
-			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
-			{
-				AnchorPointX++;
-			}
 
 			if(Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
@@ -569,6 +571,11 @@ namespace MovingObjectAtConsoleOutput
 				{
 					EliminateAndMoveRow();
 				}
+			}
+
+			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
+			{
+				AnchorPointX++;
 			}
 
 			RemovePreviousDisplay();
