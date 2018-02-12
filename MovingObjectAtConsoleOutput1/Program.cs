@@ -31,7 +31,7 @@ namespace MovingObjectAtConsoleOutput
 
 		private static void MainLoop()
 		{
-			Console.Clear();
+			//Console.SetCursorPosition(0, 0);
 
 			Pixel.OverallDisplay();
 
@@ -252,7 +252,7 @@ namespace MovingObjectAtConsoleOutput
                         isMainThreadPaused = true;
 
                         shape.InitDown();
-                        Console.Clear();
+                        Console.SetCursorPosition(0, 0);
 
                         if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
                         {
@@ -287,7 +287,7 @@ namespace MovingObjectAtConsoleOutput
 
 				Thread.Sleep(100);
 
-				Console.Clear();
+				Console.SetCursorPosition(0, 0);
 
 				for (int j = 0; j < Display.Height; j++)
 				{
@@ -330,7 +330,7 @@ namespace MovingObjectAtConsoleOutput
 			switch (key.ToString())
 			{
 				case "w":
-					Console.Clear();
+					Console.SetCursorPosition(0, 0);
 					shape.InitUp();
 
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
@@ -341,10 +341,9 @@ namespace MovingObjectAtConsoleOutput
 					break;
 
 				case "s":
-
-					
-					shape.InitDown();
+										
 					Console.Clear();
+					shape.InitDown();
 										
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
@@ -352,11 +351,10 @@ namespace MovingObjectAtConsoleOutput
                         Pixel.OverallDisplay();
                     }
 					
-
 					break;
 					
 				case "a":
-					Console.Clear();
+					Console.SetCursorPosition(0, 0);
 					shape.InitLeft();
 
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
@@ -367,7 +365,7 @@ namespace MovingObjectAtConsoleOutput
 					break;
 
 				case "d":
-					Console.Clear();
+					Console.SetCursorPosition(0, 0);
 					shape.InitRight();
 
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
@@ -643,7 +641,24 @@ namespace MovingObjectAtConsoleOutput
 				RotationIndex++;
 			}
 
+			try
+			{
 			SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 1;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
@@ -686,7 +701,24 @@ namespace MovingObjectAtConsoleOutput
 				RotationIndex++;
 			}
 
-			SetPosition();
+			try
+			{
+				SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 1;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
@@ -728,7 +760,24 @@ namespace MovingObjectAtConsoleOutput
 				RotationIndex++;
 			}
 
-			SetPosition();
+			try
+			{
+				SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 1;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
@@ -769,7 +818,25 @@ namespace MovingObjectAtConsoleOutput
 			{
 				RotationIndex++;
 			}
-			SetPosition();
+
+			try
+			{
+				SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 3;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
@@ -825,7 +892,24 @@ namespace MovingObjectAtConsoleOutput
 				RotationIndex++;
 			}
 
-			SetPosition();
+			try
+			{
+				SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 3;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
@@ -882,7 +966,24 @@ namespace MovingObjectAtConsoleOutput
 				RotationIndex++;
 			}
 
-			SetPosition();
+			try
+			{
+				SetPosition();
+
+			}
+			catch (IndexOutOfRangeException)
+			{
+				if (RotationIndex == 0)
+				{
+					RotationIndex = 3;
+				}
+				else
+				{
+					RotationIndex--;
+				}
+
+				SetPosition();
+			}
 		}
 
 		public void SetPosition()
