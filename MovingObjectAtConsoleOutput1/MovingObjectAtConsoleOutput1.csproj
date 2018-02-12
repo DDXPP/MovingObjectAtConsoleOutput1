@@ -52,9 +52,6 @@
     <ManifestCertificateThumbprint>78349A7F3DB34D82D5B1EC3D35DF2305D846AA49</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>MovingObjectAtConsoleOutput1_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
@@ -72,10 +69,6 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RandomClassLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\RandomClassLibrary\bin\Debug\RandomClassLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Data" />
@@ -104,6 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tetris%40WindowsConsole.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RandomClassLibrary\RandomClassLibrary.vbproj">
+      <Project>{9190637c-06a7-4c87-892c-ec054d770b75}</Project>
+      <Name>RandomClassLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
