@@ -56,7 +56,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public static void SelectFallingShapeIndex()
 		{
-			switch (0)
+			switch (ShapeIndex)
 			{
 				case 0:
 					HorizontalShape horizontalShape = new HorizontalShape();
