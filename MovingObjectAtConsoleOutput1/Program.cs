@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace MovingObjectAtConsoleOutput
@@ -46,29 +46,17 @@ namespace MovingObjectAtConsoleOutput
 				{
 					//Console.ReadKey();
 
-
 					Environment.Exit(0);
 				}
 
 				
-
-
-
-					Environment.Exit(0);
-				}
-
-				Pixel.OverallDisplay();
-
 
 			} while (true);
 		}
 
 		public static void SelectFallingShapeIndex()
 		{
-
-
-			switch (ShapeIndex)
-
+			switch (0)
 			{
 				case 0:
 					HorizontalShape horizontalShape = new HorizontalShape();
@@ -247,45 +235,46 @@ namespace MovingObjectAtConsoleOutput
 		private static void timer()
 		{
 			Shape shape = new Shape();
+            
+                do
+                {
+                
+                    ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
+                    SelectFallingShapeIndex();
 
+                    Shape.AnchorPointX = 5;
+                    Shape.AnchorPointY = 0;
 
-			do
-			{
-				ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
-				SelectFallingShapeIndex();
+                    Shape.RotationIndex = 0;
 
-				Shape.AnchorPointX = 5;
-				Shape.AnchorPointY = 0;
+                    do
+                    {
+                        isMainThreadPaused = true;
 
-				Shape.RotationIndex = 0;
+                        shape.InitDown();
+                        Console.Clear();
 
-				do
-				{
-					isMainThreadPaused = true;
+                        if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
+                        {
+                            Shape.initDisplayDelegate();
+                        }
 
-					shape.InitDown();
-					Console.Clear();
+                        Pixel.OverallDisplay();
 
-					if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
-					{
-						Shape.initDisplayDelegate();
-					}
+                        if (IsGameOver())
+                        {
+                            GameOver();
+                        }
 
-					Pixel.OverallDisplay();
+                        isMainThreadPaused = false;
 
-					if (IsGameOver())
-					{
-						GameOver();
-					}
+                        Thread.Sleep(500
+                            - 10 * Level);
 
-					isMainThreadPaused = false;
-
-					Thread.Sleep(500 - 10 * Level);
-
-				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
-
-			} while (true);
-
+                    } while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
+                
+                } while (true);
+            
 		}
 
 		private static void Timer_GameOverAnimation()
@@ -347,12 +336,8 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initRotateDelegate();
-
                         Pixel.OverallDisplay();
                     }
-
-		
-
 					break;
 
 				case "s":
@@ -364,10 +349,8 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
-
                         Pixel.OverallDisplay();
                     }
-
 					
 
 					break;
@@ -477,86 +460,6 @@ namespace MovingObjectAtConsoleOutput
 				Program.Score += addScore;
 			}
 		}
-
-		public static bool IsRowFilled(int j)
-		{
-			for (int i = 0; i < Width; i++)
-			{
-				if (!Pixel.GetPixel(i, j).Isplaced)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-		public static bool IsRowFilled()
-		{
-			int PixelsInOneRow = 0;
-
-			for (int j = Height - 1; j >= 0; j--)
-			{
-				for (int i = 0; i < Width; i++)
-				{
-					if (Pixel.GetPixel(i, j).Isplaced)
-					{
-						PixelsInOneRow++;
-					}
-				}
-
-				if (PixelsInOneRow == Width)
-				{
-					return true;
-				}
-				else
-				{
-					PixelsInOneRow = 0;
-				}
-			}
-			return false;
-		}
-
-		public static void EliminateAndMoveRow()
-		{
-			int addScore = 0;
-
-			for (int j = Height - 1; j >= 0; j--)
-			{
-				if (IsRowFilled(j))
-				{
-					for (int i = 0; i < Width; i++)
-					{
-						Pixel.GetPixel(i, j).IsDisplayed = false;
-						Pixel.GetPixel(i, j).Isplaced = false;
-					}
-
-					for (int upperj = j - 1; upperj >= 0; upperj--)
-					{
-						for (int i = 0; i < Width; i++)
-						{
-							if (Pixel.GetPixel(i, upperj).Isplaced || Pixel.GetPixel(i, upperj).IsDisplayed)
-							{
-								Pixel.GetPixel(i, upperj).Isplaced = false;
-								Pixel.GetPixel(i, upperj).IsDisplayed = false;
-								Pixel.GetPixel(i, upperj + 1).Isplaced = true;					
-							}
-						}
-					}
-					
-					j++;
-					addScore++;
-					Program.Level++;
-				}
-			}
-			if (addScore != 1)
-			{
-				Program.Score += addScore * addScore;
-			}
-			else
-			{
-				Program.Score += addScore;
-			}
-		}
 	}
 
 	class Pixel : Display
@@ -580,7 +483,6 @@ namespace MovingObjectAtConsoleOutput
 				for (int j = 0; j < 16; j++)
 				{
 					for (int i = 0; i < 10; i++)
-
 					{
 						if (GetPixel(i, j).IsDisplayed || GetPixel(i,j).Isplaced)
 						{
@@ -654,14 +556,12 @@ namespace MovingObjectAtConsoleOutput
 				}
                 return;
 			}
-
             if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
             {
                 AnchorPointX--;
             }
 
             RemovePreviousDisplay();
-
 		}
 
 		public void InitRight()
@@ -678,14 +578,12 @@ namespace MovingObjectAtConsoleOutput
 				}
                 return;
 			}
-
             if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
             {
                 AnchorPointX++;
             }
 
             RemovePreviousDisplay();
-
 		}
 
 		public void InitDown()
