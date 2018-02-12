@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace MovingObjectAtConsoleOutput
@@ -39,7 +39,6 @@ namespace MovingObjectAtConsoleOutput
 				
 			do
 			{
-
 				char key = Console.ReadKey(true).KeyChar;
 				Display.Move(key);
 
@@ -49,9 +48,8 @@ namespace MovingObjectAtConsoleOutput
 
 					Environment.Exit(0);
 				}
-				Console.Clear();
 
-				Pixel.OverallDisplay();
+				
 
 			} while (true);
 		}
@@ -237,44 +235,46 @@ namespace MovingObjectAtConsoleOutput
 		private static void timer()
 		{
 			Shape shape = new Shape();
+            
+                do
+                {
+                
+                    ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
+                    SelectFallingShapeIndex();
 
-			do
-			{
-				ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
-				SelectFallingShapeIndex();
+                    Shape.AnchorPointX = 5;
+                    Shape.AnchorPointY = 0;
 
-				Shape.AnchorPointX = 5;
-				Shape.AnchorPointY = 0;
+                    Shape.RotationIndex = 0;
 
-				Shape.RotationIndex = 0;
+                    do
+                    {
+                        isMainThreadPaused = true;
 
-				do
-				{
-					isMainThreadPaused = true;
+                        shape.InitDown();
+                        Console.Clear();
 
-					shape.InitDown();
+                        if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
+                        {
+                            Shape.initDisplayDelegate();
+                        }
 
-					if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
-					{
-						Shape.initDisplayDelegate();
-					}
+                        Pixel.OverallDisplay();
 
-					Console.Clear();
+                        if (IsGameOver())
+                        {
+                            GameOver();
+                        }
 
-					Pixel.OverallDisplay();
+                        isMainThreadPaused = false;
 
-					if (IsGameOver())
-					{
-						GameOver();
-					}
+                        Thread.Sleep(500
+                            - 10 * Level);
 
-					isMainThreadPaused = false;
-
-					Thread.Sleep(500 - 10 * Level);
-
-				} while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
-
-			} while (true);
+                    } while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
+                
+                } while (true);
+            
 		}
 
 		private static void Timer_GameOverAnimation()
@@ -336,7 +336,8 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initRotateDelegate();
-					}
+                        Pixel.OverallDisplay();
+                    }
 					break;
 
 				case "s":
@@ -348,7 +349,8 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
-					}
+                        Pixel.OverallDisplay();
+                    }
 					
 
 					break;
@@ -360,7 +362,8 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
-					}
+                        Pixel.OverallDisplay();
+                    }
 					break;
 
 				case "d":
@@ -370,11 +373,11 @@ namespace MovingObjectAtConsoleOutput
 					if (!Program.IsTouchLowerBorder() && !Program.IsTouchPileLowerSurface())
 					{
 						Shape.initDisplayDelegate();
-					}
+                        Pixel.OverallDisplay();
+                    }
 					break;
-
-				default:
-					break;
+                default:
+                    break;
 			}
 		}
 
@@ -542,11 +545,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitLeft()
 		{
-			if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
-			{
-				AnchorPointX--;
-			}
-
+			
 			if (Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
 				Program.SetShapeToStatic();
@@ -555,13 +554,19 @@ namespace MovingObjectAtConsoleOutput
 				{
 					EliminateAndMoveRow();
 				}
+                return;
 			}
+            if (!Program.IsTouchLeftBorder() && !Program.IsTouchPileLeftSurface())
+            {
+                AnchorPointX--;
+            }
 
-			RemovePreviousDisplay();
+            RemovePreviousDisplay();
 		}
 
 		public void InitRight()
 		{
+			
 
 			if(Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
@@ -571,14 +576,14 @@ namespace MovingObjectAtConsoleOutput
 				{
 					EliminateAndMoveRow();
 				}
+                return;
 			}
+            if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
+            {
+                AnchorPointX++;
+            }
 
-			if (!Program.IsTouchRightBorder() && !Program.IsTouchPileRightSurface())
-			{
-				AnchorPointX++;
-			}
-
-			RemovePreviousDisplay();
+            RemovePreviousDisplay();
 		}
 
 		public void InitDown()
