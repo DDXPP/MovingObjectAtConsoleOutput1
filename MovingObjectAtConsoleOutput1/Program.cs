@@ -5,30 +5,43 @@ namespace MovingObjectAtConsoleOutput
 {
 	class Program
 	{
-		public static int ShapeIndex { get; set; }
-		public static int Score { get; set; }
-		public static int Level { get; set; } = 0;
+		#region Properties
 
-		private static System.Object lockThis = new System.Object();
+			public static int ShapeIndex { get; set; }
 
-		private static bool isMainThreadPaused { get; set; }
+			public static int Score { get; set; }
+
+			public static int Level { get; set; } = 0;
+
+			private static bool isMainThreadPaused { get; set; }
+
+
+		#endregion
+
+		#region Instantiation
+
+			private static System.Object lockThis = new System.Object();
+
+			public static Thread ChildThread = new Thread(new ThreadStart(timer));
+
+			private static Thread gameOverThread = new Thread(new ThreadStart(Timer_GameOverAnimation));
+
+		#endregion
 
 		static void Main(string[] args)
 		{
 			initialization();
 
 			MainLoop();
-
 		}
 
 		private static void initialization()
 		{
 			Pixel pixel = new Pixel();
+
 			pixel.Initialization();
 		}
-
-		public static Thread ChildThread = new Thread(new ThreadStart(timer));
-
+		
 		private static void MainLoop()
 		{
 			//Console.SetCursorPosition(0, 0);
@@ -102,7 +115,9 @@ namespace MovingObjectAtConsoleOutput
 			}
 		}
 
-		public static bool IsTouchLeftBorder()
+		#region Statements
+
+			public static bool IsTouchLeftBorder()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -114,7 +129,7 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-		public static bool IsTouchRightBorder()
+			public static bool IsTouchRightBorder()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -126,7 +141,7 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-		public static bool IsTouchLowerBorder()
+			public static bool IsTouchLowerBorder()
 		{
 			lock (lockThis)
 			{
@@ -142,7 +157,7 @@ namespace MovingObjectAtConsoleOutput
 
 		}
 
-		public static bool IsTouchPileLeftSurface()
+			public static bool IsTouchPileLeftSurface()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -160,7 +175,7 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-		public static bool IsTouchPileRightSurface()
+			public static bool IsTouchPileRightSurface()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -178,7 +193,7 @@ namespace MovingObjectAtConsoleOutput
 			return false;
 		}
 
-		public static bool IsTouchPileLowerSurface()                                               // Must be stated after the "IsTouchLowerBoarder" statement
+			public static bool IsTouchPileLowerSurface()
 		{
 			lock (lockThis)
 			{
@@ -200,7 +215,7 @@ namespace MovingObjectAtConsoleOutput
 
 		}
 
-		public static bool IsGameOver()
+			public static bool IsGameOver()
 		{
 			for (int i = 0; i < Display.Width; i++)
 			{
@@ -211,8 +226,8 @@ namespace MovingObjectAtConsoleOutput
 			}
 			return false;
 		}
-
-		private static Thread gameOverThread = new Thread(new ThreadStart(Timer_GameOverAnimation));
+		
+		#endregion
 
 		public static void GameOver()
 		{
@@ -321,6 +336,7 @@ namespace MovingObjectAtConsoleOutput
 	class Display
 	{
 		public static int Width { get; set; } = 10;
+
 		public static int Height { get; set; } = 16;
 
 		public static void Move(char key)
@@ -463,6 +479,7 @@ namespace MovingObjectAtConsoleOutput
 	class Pixel : Display
 	{
 		public bool IsDisplayed = false;
+
 		public bool Isplaced = false;
 
 		private static Object lockThis = new Object();
@@ -524,7 +541,9 @@ namespace MovingObjectAtConsoleOutput
 	class Shape : Display
 	{
 		public static int AnchorPointX { get; set; } = 4;
+
 		public static int AnchorPointY { get; set; } = 0;
+
 		public static int RotationIndex { get; set; } = 0;
 
 		private Object lockThis = new object();
@@ -623,426 +642,429 @@ namespace MovingObjectAtConsoleOutput
 		public static InitDisplayDelegate initRotateDelegate;
 	}
 
-	class HorizontalShape : Shape
-	{
-		public void InitDisplay()
+	#region Miscellaneous Shapes
+
+		class SShape : Shape
 		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-			if (RotationIndex == 1)
+			public void InitDisplay()
 			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
+				SetPosition();
 			}
 
-			try
+			public void InitRotate()
 			{
-			SetPosition();
 
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				if (RotationIndex == 1)
 				{
-					RotationIndex = 1;
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
-				SetPosition();
-			}
-		}
-
-		public void SetPosition()
-		{
-			switch (RotationIndex)
-			{
-				case 0:                                                                            // Anchor point is set to (0, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┬─┬─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┴─┴─┘
-					Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
-					Pixel.GetPixel(AnchorPointX + 3, AnchorPointY).IsDisplayed = true;
-					break;
-
-				case 1:                                                                            // Anchor point remains unchanged
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 3).IsDisplayed = true;             // ├─┤
-					break;                                                                         // └─┘
-			}
-		}
-	}
-
-	class SShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-
-			if (RotationIndex == 1)
-			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
-			}
-
-			try
-			{
-				SetPosition();
-
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				try
 				{
-					RotationIndex = 1;
+					SetPosition();
+
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 1;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
+			{
+				switch (RotationIndex)
+				{
+					case 0:                                                                            // Anchor point is set to (1, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┬─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┼─┼─┘
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+
+					case 1:                                                                            // Anchor point remains unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;         // ┌─┐
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ├─┼─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             //   └─┘
+						break;
+				}
+			}
+		}
+
+		class ZShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+
+			public void InitRotate()
+			{
+				if (RotationIndex == 1)
+				{
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
-				SetPosition();
-			}
-		}
-
-		public void SetPosition()
-		{
-			switch (RotationIndex)
-			{
-				case 0:                                                                            // Anchor point is set to (1, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┬─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┼─┼─┘
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-
-				case 1:                                                                            // Anchor point remains unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;         // ┌─┐
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ├─┼─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             //   └─┘
-					break;
-			}
-		}
-	}
-
-	class ZShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-			if (RotationIndex == 1)
-			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
-			}
-
-			try
-			{
-				SetPosition();
-
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				try
 				{
-					RotationIndex = 1;
+					SetPosition();
+
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 1;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
+			{
+				switch (RotationIndex)
+				{
+					case 0:                                                                            // Anchor point is set to (1, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┐
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // └─┼─┼─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   └─┴─┘
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+
+					case 1:                                                                            // Anchor point remains unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;         //   ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┘
+						break;
+				}
+			}
+		}
+
+		class LShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+
+			public void InitRotate()
+			{
+				if (RotationIndex == 3)
+				{
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
-				SetPosition();
-			}
-		}
-
-		public void SetPosition()
-		{
-			switch (RotationIndex)
-			{
-				case 0:                                                                            // Anchor point is set to (1, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┐
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // └─┼─┼─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   └─┴─┘
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-
-				case 1:                                                                            // Anchor point remains unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;         //   ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┘
-					break;
-			}
-		}
-	}
-
-	class LShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-			if (RotationIndex == 3)
-			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
-			}
-
-			try
-			{
-				SetPosition();
-
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				try
 				{
-					RotationIndex = 3;
+					SetPosition();
+
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 3;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
+			{ 
+				switch (RotationIndex)
+				{
+					case 0:                                                                            // Anchor point is set to (0, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┼─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
+						break;
+
+					case 1:                                                                            // Anchor point is changed to (1, 0)
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┬─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ├─┼─┴─┘
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // └─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+
+					case 2:                                                                            // Anchor point remians unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             //   └─┘
+						break;
+
+					case 3:                                                                            // Anchor point remain unchanged
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             //     ┌─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;         // ┌─┬─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┴─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+				}
+			}
+		}
+
+		class JShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+
+			public void InitRotate()
+			{
+				if (RotationIndex == 3)
+				{
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
-				SetPosition();
-			}
-		}
-
-		public void SetPosition()
-		{ 
-			switch (RotationIndex)
-			{
-				case 0:                                                                            // Anchor point is set to (0, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┼─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
-					break;
-
-				case 1:                                                                            // Anchor point is changed to (1, 0)
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┬─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ├─┼─┴─┘
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // └─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-
-				case 2:                                                                            // Anchor point remians unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             //   └─┘
-					break;
-
-				case 3:                                                                            // Anchor point remain unchanged
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             //     ┌─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;         // ┌─┬─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┴─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-			}
-		}
-	}
-
-	class JShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-			if (RotationIndex == 3)
-			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
-			}
-
-			try
-			{
-				SetPosition();
-
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				try
 				{
-					RotationIndex = 3;
+					SetPosition();
+
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 3;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
+			{
+				switch (RotationIndex)
+				{
+					case 0:                                                                            // Anchor point is set to (1, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ┌─┼─┤
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
+						break;
+
+					case 1:                                                                            // Anchor point remains unchanged
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;         // ├─┼─┬─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┴─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+
+					case 2:                                                                            // Anchor point remians unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // └─┘
+						break;
+
+					case 3:                                                                            // Anchor point remain unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┬─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //     └─┘
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+				}
+			}
+		}
+
+		class TShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+		
+			public void InitRotate()
+			{
+				if (RotationIndex == 3)
+				{
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
-				SetPosition();
-			}
-		}
-
-		public void SetPosition()
-		{
-			switch (RotationIndex)
-			{
-				case 0:                                                                            // Anchor point is set to (1, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //   ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             //   ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ┌─┼─┤
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;         // └─┴─┘
-					break;
-
-				case 1:                                                                            // Anchor point remains unchanged
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // ┌─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;         // ├─┼─┬─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // └─┴─┴─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-
-				case 2:                                                                            // Anchor point remians unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┼─┘
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ├─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // └─┘
-					break;
-
-				case 3:                                                                            // Anchor point remain unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;             // ┌─┬─┬─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 //     └─┘
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
-			}
-		}
-	}
-
-	class TShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-
-		public void InitRotate()
-		{
-			if (RotationIndex == 3)
-			{
-				RotationIndex = 0;
-			}
-			else
-			{
-				RotationIndex++;
-			}
-
-			try
-			{
-				SetPosition();
-
-			}
-			catch (IndexOutOfRangeException)
-			{
-				if (RotationIndex == 0)
+				try
 				{
-					RotationIndex = 3;
+					SetPosition();
+
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 3;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
+			{
+				switch (RotationIndex)
+				{
+					case 0:                                                                                    // Anchor point is set to (1, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ┌─┼─┼─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┴─┴─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
+						break;
+
+					case 1:                                                                                    // Anchor point remains unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     // ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ├─┼─┐
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;                 // ├─┼─┘
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;                 // └─┘
+						break;
+
+					case 2:                                                                                    // Anchor point remain unchanged
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     // ┌─┬─┬─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // └─┼─┼─┘
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   └─┘
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;
+						break;
+
+					case 3:                                                                                    // Anchor point remain unchanged
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;                     // ┌─┼─┤
+						Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┼─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   └─┘
+						break;
+				}
+			}
+		}
+
+		class OShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+
+			public void InitRotate()
+			{
+				SetPosition();
+				// It has no ROTATE method
+			}
+
+			public void SetPosition()
+			{                                                                                          // Anchor point is set to (0, 0)
+				Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
+				Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
+				Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   └─┴─┘
+				Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
+			}
+		}
+
+		class HorizontalShape : Shape
+		{
+			public void InitDisplay()
+			{
+				SetPosition();
+			}
+
+			public void InitRotate()
+			{
+				if (RotationIndex == 1)
+				{
+					RotationIndex = 0;
 				}
 				else
 				{
-					RotationIndex--;
+					RotationIndex++;
 				}
 
+				try
+				{
 				SetPosition();
-			}
-		}
 
-		public void SetPosition()
-		{
-			switch (RotationIndex)
+				}
+				catch (IndexOutOfRangeException)
+				{
+					if (RotationIndex == 0)
+					{
+						RotationIndex = 1;
+					}
+					else
+					{
+						RotationIndex--;
+					}
+
+					SetPosition();
+				}
+			}
+
+			public void SetPosition()
 			{
-				case 0:                                                                                    // Anchor point is set to (1, 0)
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ┌─┼─┼─┐
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┴─┴─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;
-					break;
+				switch (RotationIndex)
+				{
+					case 0:                                                                            // Anchor point is set to (0, 0)
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┬─┬─┬─┐
+						Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;             // └─┴─┴─┴─┘
+						Pixel.GetPixel(AnchorPointX + 2, AnchorPointY).IsDisplayed = true;
+						Pixel.GetPixel(AnchorPointX + 3, AnchorPointY).IsDisplayed = true;
+						break;
 
-				case 1:                                                                                    // Anchor point remains unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     // ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // ├─┼─┐
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;                 // ├─┼─┘
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 2).IsDisplayed = true;                 // └─┘
-					break;
-
-				case 2:                                                                                    // Anchor point remain unchanged
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY).IsDisplayed = true;                     // ┌─┬─┬─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     // └─┼─┼─┘
-					Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   └─┘
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;
-					break;
-
-				case 3:                                                                                    // Anchor point remain unchanged
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   ┌─┐
-					Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;                     // ┌─┼─┤
-					Pixel.GetPixel(AnchorPointX - 1, AnchorPointY + 1).IsDisplayed = true;                 // └─┼─┤
-					Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   └─┘
-					break;
+					case 1:                                                                            // Anchor point remains unchanged
+						Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                 // ┌─┐
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;             // ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 2).IsDisplayed = true;             // ├─┤
+						Pixel.GetPixel(AnchorPointX, AnchorPointY + 3).IsDisplayed = true;             // ├─┤
+						break;                                                                         // └─┘
+				}
 			}
 		}
-	}
 
-	class OShape : Shape
-	{
-		public void InitDisplay()
-		{
-			SetPosition();
-		}
-
-		public void InitRotate()
-		{
-			SetPosition();
-			// It has no ROTATE method
-		}
-
-		public void SetPosition()                                                                  // Anchor point is set to (0, 0)
-		{
-			Pixel.GetPixel(AnchorPointX, AnchorPointY).IsDisplayed = true;                         //   ┌─┬─┐
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY).IsDisplayed = true;                     //   ├─┼─┤
-			Pixel.GetPixel(AnchorPointX, AnchorPointY + 1).IsDisplayed = true;                     //   └─┴─┘
-			Pixel.GetPixel(AnchorPointX + 1, AnchorPointY + 1).IsDisplayed = true;
-		}
-	}
-
+	#endregion
+	
 	enum Action
 	{
 		Up,
