@@ -4,9 +4,9 @@
 
         Randomize()
 
-        Dim randomNumber As Single = VBMath.Rnd()
+		Dim randomNumber As Single = Rnd()
 
-        For i As Integer = 1 To Max - Min + 1
+		For i As Integer = 1 To Max - Min + 1
 
             If randomNumber < i / (Max - Min + 1) Then
 

@@ -8,11 +8,8 @@ namespace MovingObjectAtConsoleOutput
 		#region Properties
 
 			public static int ShapeIndex { get; set; }
-
 			public static int Score { get; set; }
-
 			public static int Level { get; set; } = 0;
-
 			private static bool isMainThreadPaused { get; set; }
 
 
@@ -21,9 +18,7 @@ namespace MovingObjectAtConsoleOutput
 		#region Instantiation
 
 			private static System.Object lockThis = new System.Object();
-
 			public static Thread ChildThread = new Thread(new ThreadStart(timer));
-
 			private static Thread gameOverThread = new Thread(new ThreadStart(Timer_GameOverAnimation));
 
 		#endregion
@@ -31,7 +26,6 @@ namespace MovingObjectAtConsoleOutput
 		static void Main(string[] args)
 		{
 			initialization();
-
 			MainLoop();
 		}
 
@@ -44,25 +38,19 @@ namespace MovingObjectAtConsoleOutput
 		
 		private static void MainLoop()
 		{
-			//Console.SetCursorPosition(0, 0);
-
 			Pixel.OverallDisplay();
-
 			ChildThread.Start();
 				
 			do
 			{
 				char key = Console.ReadKey(true).KeyChar;
+
 				Display.Move(key);
 
 				if (ShapeIndex == -1)
 				{
-					//Console.ReadKey();
-
 					Environment.Exit(0);
-				}
-
-				
+				}			
 
 			} while (true);
 		}
@@ -117,7 +105,7 @@ namespace MovingObjectAtConsoleOutput
 
 		#region Statements
 
-			public static bool IsTouchLeftBorder()
+		public static bool IsTouchLeftBorder()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -126,10 +114,11 @@ namespace MovingObjectAtConsoleOutput
 					return true;
 				}
 			}
+
 			return false;
 		}
 
-			public static bool IsTouchRightBorder()
+		public static bool IsTouchRightBorder()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -138,10 +127,11 @@ namespace MovingObjectAtConsoleOutput
 					return true;
 				}
 			}
+
 			return false;
 		}
 
-			public static bool IsTouchLowerBorder()
+		public static bool IsTouchLowerBorder()
 		{
 			lock (lockThis)
 			{
@@ -152,12 +142,12 @@ namespace MovingObjectAtConsoleOutput
 						return true;
 					}
 				}
+
 				return false;
 			}
-
 		}
 
-			public static bool IsTouchPileLeftSurface()
+		public static bool IsTouchPileLeftSurface()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -172,10 +162,11 @@ namespace MovingObjectAtConsoleOutput
 					}
 				}
 			}
+
 			return false;
 		}
 
-			public static bool IsTouchPileRightSurface()
+		public static bool IsTouchPileRightSurface()
 		{
 			for (int j = 0; j < Display.Height; j++)
 			{
@@ -190,10 +181,11 @@ namespace MovingObjectAtConsoleOutput
 					}
 				}
 			}
+
 			return false;
 		}
 
-			public static bool IsTouchPileLowerSurface()
+		public static bool IsTouchPileLowerSurface()
 		{
 			lock (lockThis)
 			{
@@ -210,12 +202,12 @@ namespace MovingObjectAtConsoleOutput
 						}
 					}
 				}
+
 				return false;
 			}
-
 		}
 
-			public static bool IsGameOver()
+		public static bool IsGameOver()
 		{
 			for (int i = 0; i < Display.Width; i++)
 			{
@@ -251,45 +243,42 @@ namespace MovingObjectAtConsoleOutput
 		{
 			Shape shape = new Shape();
             
+            do
+            {                
+                ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
+
+                SelectFallingShapeIndex();
+
+                Shape.AnchorPointX = 5;
+                Shape.AnchorPointY = 0;
+                Shape.RotationIndex = 0;
+
                 do
                 {
-                
-                    ShapeIndex = RandomClassLibrary.Random.GetRandom(0, 6);
-                    SelectFallingShapeIndex();
+                    isMainThreadPaused = true;
 
-                    Shape.AnchorPointX = 5;
-                    Shape.AnchorPointY = 0;
+                    shape.InitDown();
+                    Console.SetCursorPosition(0, 0);
 
-                    Shape.RotationIndex = 0;
-
-                    do
+                    if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
                     {
-                        isMainThreadPaused = true;
+                        Shape.initDisplayDelegate();
+                    }
 
-                        shape.InitDown();
-                        Console.SetCursorPosition(0, 0);
+                    Pixel.OverallDisplay();
 
-                        if (!IsTouchLowerBorder() && !IsTouchPileLowerSurface())
-                        {
-                            Shape.initDisplayDelegate();
-                        }
+                    if (IsGameOver())
+                    {
+                        GameOver();
+                    }
 
-                        Pixel.OverallDisplay();
+                    isMainThreadPaused = false;
 
-                        if (IsGameOver())
-                        {
-                            GameOver();
-                        }
+                    Thread.Sleep(500 - 10 * Level);
 
-                        isMainThreadPaused = false;
-
-                        Thread.Sleep(500
-                            - 10 * Level);
-
-                    } while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
+                } while (!IsTouchLowerBorder() && !IsTouchPileLowerSurface());
                 
-                } while (true);
-            
+            } while (true);            
 		}
 
 		private static void Timer_GameOverAnimation()
@@ -313,8 +302,7 @@ namespace MovingObjectAtConsoleOutput
 				}
 
 				Pixel.OverallDisplay();
-
-
+				
 				foreach (Pixel item in Pixel.DisplayMatrix)
 				{
 					if (!item.Isplaced && !item.IsDisplayed)
@@ -336,7 +324,6 @@ namespace MovingObjectAtConsoleOutput
 	class Display
 	{
 		public static int Width { get; set; } = 10;
-
 		public static int Height { get; set; } = 16;
 
 		public static void Move(char key)
@@ -346,6 +333,7 @@ namespace MovingObjectAtConsoleOutput
 			switch (key.ToString())
 			{
 				case "w":
+
 					Console.SetCursorPosition(0, 0);
 					shape.InitUp();
 
@@ -370,6 +358,7 @@ namespace MovingObjectAtConsoleOutput
 					break;
 					
 				case "a":
+
 					Console.SetCursorPosition(0, 0);
 					shape.InitLeft();
 
@@ -381,6 +370,7 @@ namespace MovingObjectAtConsoleOutput
 					break;
 
 				case "d":
+
 					Console.SetCursorPosition(0, 0);
 					shape.InitRight();
 
@@ -390,6 +380,7 @@ namespace MovingObjectAtConsoleOutput
                         Pixel.OverallDisplay();
                     }
 					break;
+
                 default:
                     break;
 			}
@@ -404,6 +395,7 @@ namespace MovingObjectAtConsoleOutput
 					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -430,6 +422,7 @@ namespace MovingObjectAtConsoleOutput
 					PixelsInOneRow = 0;
 				}
 			}
+
 			return false;
 		}
 
@@ -479,11 +472,8 @@ namespace MovingObjectAtConsoleOutput
 	class Pixel : Display
 	{
 		public bool IsDisplayed = false;
-
 		public bool Isplaced = false;
-
 		private static Object lockThis = new Object();
-
 		public static Pixel[,] DisplayMatrix = new Pixel[Width, Height];
 
 		public static Pixel GetPixel(int i, int j)
@@ -521,9 +511,7 @@ namespace MovingObjectAtConsoleOutput
 
 					Console.WriteLine("");
 				}
-
 			}
-
 		}
 
 		public void Initialization()
@@ -550,7 +538,7 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitUp()
 		{
-				Program.SelectFallingShapeIndex();
+			Program.SelectFallingShapeIndex();
 
 			if (Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
@@ -583,8 +571,6 @@ namespace MovingObjectAtConsoleOutput
 
 		public void InitRight()
 		{
-			
-
 			if(Program.IsTouchLowerBorder() || Program.IsTouchPileLowerSurface())
 			{
 				Program.SetShapeToStatic();
@@ -623,7 +609,6 @@ namespace MovingObjectAtConsoleOutput
 
 				RemovePreviousDisplay();
 			}
-
 		}
 
 		public void RemovePreviousDisplay()
@@ -666,7 +651,6 @@ namespace MovingObjectAtConsoleOutput
 				try
 				{
 					SetPosition();
-
 				}
 				catch (IndexOutOfRangeException)
 				{
@@ -725,7 +709,6 @@ namespace MovingObjectAtConsoleOutput
 				try
 				{
 					SetPosition();
-
 				}
 				catch (IndexOutOfRangeException)
 				{
@@ -784,7 +767,6 @@ namespace MovingObjectAtConsoleOutput
 				try
 				{
 					SetPosition();
-
 				}
 				catch (IndexOutOfRangeException)
 				{
